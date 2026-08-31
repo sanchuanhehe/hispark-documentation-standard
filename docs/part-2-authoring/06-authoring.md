@@ -4,29 +4,7 @@ title: '6. 页面创作规范'
 
 ## 6.1 必需元数据
 
-新建或实质性重写的 Markdown 内容页 MUST 在 Front Matter 中提供：
-
-```yaml
----
-title: 如何配置网络自动重连
-doc_type: how-to
-product: "<product-id>"
-applies_to:
-  sdk: "<supported-version>"
-  target: "<build-target>"
-status: verified
-owner: connectivity-maintainers
-last_verified: 2026-08-29
-verification_level: build
-source_refs:
-  - src/application/samples/network/client
-  - config/targets/<build-target>
-upstream_refs:
-  - project: upstream-project
-    version: "v1.2.0"
-    url: https://example.org/docs/v1.2/getting-started/
----
-```
+新建或实质性重写的内容页 MUST 通过项目统一的结构化元数据机制提供下列字段。元数据的物理表示方式由采用项目决定，但字段语义、取值约束和校验结果 MUST 保持一致。
 
 字段规则：
 
@@ -139,7 +117,7 @@ API 参考 SHOULD 包含：
 
 ### 6.4.2 命名与链接
 
-1. 新目录和文件 MUST 使用小写 ASCII `kebab-case`，例如 `power-management/`、`flash-and-run.md`。
+1. 新目录和页面标识 MUST 使用小写 ASCII `kebab-case`，例如 `power-management`、`flash-and-run`；物理文件扩展名由采用项目决定。
 2. 已发布的中文路径 MAY 为 URL 兼容保留；新文件名 MUST NOT 使用空格、含义不明的数字串或临时后缀。
 3. 图片文件名 SHOULD 描述内容和状态，例如 `flash-success.png`。
 4. 内部文档引用 MUST 使用可点击的相对链接，MUST NOT 只写文件名或文档名。
@@ -155,7 +133,7 @@ API 参考 SHOULD 包含：
 4. 命令前 MUST 说明执行目录、权限和环境；命令后 SHOULD 给出关键预期输出。
 5. 占位符 MUST 使用可识别形式，例如 `<sdk-root>`，并 MUST 在首次出现时解释。
 6. 表格 MUST 有明确表头；复杂流程 SHOULD 优先使用列表、分段或图，而不是超宽表格。
-7. 原始 HTML SHOULD NOT 用于可由 Markdown 或 MkDocs 组件表达的内容。
+7. 项目 SHOULD NOT 直接嵌入绕过内容模型和主题系统的表现层标记；可由项目批准的结构化内容组件表达时 SHOULD 使用该组件。
 8. 警告 MUST 放在危险动作之前，MUST 说明风险、影响对象和恢复方式。
 
 ## 6.6 图片与可视化内容
@@ -165,7 +143,7 @@ API 参考 SHOULD 包含：
 1. 命令、代码、配置、日志、错误信息、路径和参数表 MUST 使用文本、代码块或表格表达，MUST NOT 只以截图承载。
 2. 图片 SHOULD 用于界面位置、硬件接线、物理状态、波形、空间关系或其他视觉关系确实影响理解和操作的场景。
 3. 图片中的关键结论、操作目标和完成判据 MUST 同时出现在正文、图注或有效替代文本中，MUST NOT 要求用户仅凭观察图片推断。
-4. 架构图、流程图和时序图 SHOULD 优先使用 Mermaid、PlantUML、SVG 或其他可编辑、可版本管理的源格式。导出图片时，源文件 MUST 与导出产物建立明确映射并一同维护。
+4. 架构图、流程图和时序图 SHOULD 使用可编辑、可版本管理的文本化或结构化图源。导出图片时，源文件 MUST 与导出产物建立明确映射并一同维护。
 5. 线条图和图标 SHOULD 使用 SVG；需要保留像素细节的截图或照片 MAY 使用 PNG、JPEG 或项目批准的格式。动画和视频 MUST NOT 成为关键步骤或结论的唯一载体。
 6. 截图 MUST 裁剪到完成任务所需的最小区域，SHOULD 标注适用产品、软件版本、操作系统或界面状态。装饰性边框、无关桌面区域和重复截图 SHOULD NOT 保留。
 7. 每张有信息意义的图片 MUST 提供描述其目的和关键内容的替代文本；装饰性图片 MAY 使用空替代文本，并 SHOULD 能在不影响理解的情况下删除。

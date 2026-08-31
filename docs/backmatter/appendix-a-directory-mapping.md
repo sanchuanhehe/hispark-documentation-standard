@@ -3,7 +3,7 @@ title: '附录 A：一级目录到 Diátaxis 的推荐映射'
 ---
 
 ```text
-index.md                 产品导航，不属于四类内容
+<index-page>             产品导航，不属于四类内容
 get-started/             主要为 tutorial
 guides/                  主要为 how-to
 samples/                 how-to（实践指南）
