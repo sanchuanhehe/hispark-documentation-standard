@@ -1,0 +1,36 @@
+myst: v1
+title: HiSpark 中文 LaTeX Book
+description: 基于 ctexbook 和 XeLaTeX 的 HiSpark 中文规范模板
+version: 1.0.0
+authors:
+  - name: HiSpark 文档规范维护者
+license: CC-BY-4.0
+tags:
+  - book
+  - chinese
+  - xelatex
+doc:
+  - id: title
+    required: true
+  - id: subtitle
+  - id: authors
+    required: true
+  - id: bibliography
+files:
+  - template.tex
+packages:
+  - amssymb
+  - booktabs
+  - caption
+  - changepage
+  - ctex
+  - enumitem
+  - framed
+  - geometry
+  - graphicx
+  - hyperref
+  - hyphenat
+  - listings
+  - longtable
+  - natbib
+  - xcolor

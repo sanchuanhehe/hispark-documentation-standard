@@ -1,0 +1,176 @@
+---
+title: '6. 页面创作规范'
+---
+
+## 6.1 必需元数据
+
+新建或实质性重写的 Markdown 内容页 MUST 在 Front Matter 中提供：
+
+```yaml
+---
+title: 如何配置网络自动重连
+doc_type: how-to
+product: "<product-id>"
+applies_to:
+  sdk: "<supported-version>"
+  target: "<build-target>"
+status: verified
+owner: connectivity-maintainers
+last_verified: 2026-08-29
+verification_level: build
+source_refs:
+  - src/application/samples/network/client
+  - config/targets/<build-target>
+upstream_refs:
+  - project: upstream-project
+    version: "v1.2.0"
+    url: https://example.org/docs/v1.2/getting-started/
+---
+```
+
+字段规则：
+
+| 字段 | 要求 |
+|---|---|
+| `title` | MUST 面向用户问题，避免仅使用内部模块代号 |
+| `doc_type` | MUST 为 `tutorial`、`how-to`、`reference` 或 `explanation` |
+| `product` | MUST 使用正式产品名；跨产品页面 MUST 明列全部适用产品 |
+| `applies_to` | 与软件或硬件版本相关时 MUST 给出 SDK、Target、单板或工具版本 |
+| `status` | MUST 为 `draft`、`reviewed`、`verified`、`deprecated` 之一 |
+| `owner` | MUST 指向可负责评审与过期处理的团队或角色 |
+| `last_verified` | `verified` 页面 MUST 使用 ISO 8601 日期 |
+| `verification_level` | MUST 为 `static`、`build`、`hil` 或 `not-applicable` |
+| `source_refs` | 代码、配置、接口或样例相关页面 MUST 给出可审查的源码路径 |
+| `upstream_refs` | 依赖上游说明时 MUST 给出上游项目、适用版本和稳定 URL；不依赖时 MAY 省略 |
+
+`status: verified` MUST NOT 在缺少相应证据时使用。硬件运行结果通常 REQUIRED `verification_level: hil`。
+
+## 6.2 版本与生命周期
+
+### 6.2.1 版本适用性
+
+1. 页面 MUST 明确适用于发布版本、维护分支还是 `master`。
+2. 文档 MUST NOT 使用无日期、无链接的“最新版本”作为唯一版本说明。
+3. 版本选择器、页面元数据、下载地址和源码分支 SHOULD 保持一致。
+4. 发布文档 MUST 链接到可验证的 SDK 获取入口和发布说明。
+
+### 6.2.2 状态
+
+| 状态 | 含义 | 发布要求 |
+|---|---|---|
+| `draft` | 内容尚未完成或尚未评审 | MUST NOT 进入默认稳定导航 |
+| `reviewed` | 已完成内容与技术评审 | MAY 发布，但 MUST 标明尚未完成运行验证的部分 |
+| `verified` | 已按声明的验证级别通过 | MAY 进入推荐路径 |
+| `deprecated` | 不再推荐，但为兼容保留 | MUST 显示替代页面、停止版本和迁移路径 |
+
+页面只有在完成[第 10.2 节](#review-requirements)适用的全部 Review，且批准仍对应当前提交时，才 MAY 标记为 `reviewed`。`verified` 在此基础上还 MUST 满足声明的验证级别和[第 10.4 节](#definition-of-done)完成定义。
+
+无人负责、长期未验证或已失去适用版本的页面 MUST 进入复核；无法恢复可信度时 SHOULD 下线或归档。
+
+## 6.3 页面结构模板
+
+### 6.3.1 教程模板
+
+教程 SHOULD 按以下顺序组织：
+
+1. 你将完成什么；
+2. 适用版本与开发板；
+3. 前置条件；
+4. 预计用时；
+5. 分步骤操作；
+6. 每个关键步骤的预期结果；
+7. 最终验证；
+8. 清理或恢复环境；
+9. 下一步学习入口。
+
+教程中的每个关键动作 MUST 提供可观察结果。失败分支 SHOULD 只覆盖高概率阻塞点，完整排障 MUST 链接到实践指南。
+
+### 6.3.2 实践指南模板
+
+实践指南 SHOULD 按以下顺序组织：
+
+1. 目标；
+2. 适用条件；
+3. 前置状态；
+4. 操作或决策步骤；
+5. 主要分支与限制；
+6. 验证完成；
+7. 回滚或恢复；
+8. 相关参考资料与解释说明。
+
+涉及擦除 Flash、修改 eFuse、覆盖配置、密钥操作或不可逆行为时，页面 MUST 在动作之前给出明确警告和恢复边界。
+
+### 6.3.3 参考资料模板
+
+API 参考 SHOULD 包含：
+
+1. 概述与头文件；
+2. 适用版本与能力限制；
+3. 函数或数据结构签名；
+4. 参数、方向、单位、范围和生命周期；
+5. 返回值与错误码；
+6. 并发、中断上下文、内存和权限约束；
+7. 最小用法示例；
+8. 对应源码与相关指南。
+
+自动生成内容 MAY 使用，但生成源、版本和人工补充边界 MUST 明确。
+
+### 6.3.4 解释说明模板
+
+解释说明 SHOULD 包含：
+
+1. 要解释的主题或“为什么”问题；
+2. 背景与上下文；
+3. 概念模型和组成关系；
+4. 设计原因与约束；
+5. 取舍、替代方案和边界；
+6. 对开发、调试或维护的影响；
+7. 相关教程、实践指南和参考资料。
+
+## 6.4 标题、命名与链接
+
+### 6.4.1 标题用语
+
+- 教程标题 SHOULD 描述可完成的学习成果。
+- 实践指南标题 SHOULD 采用“如何……”或明确的任务动词。
+- 参考资料标题 SHOULD 使用对象名称加“API 参考”“参数参考”“硬件参考”。
+- 解释说明标题 SHOULD 使用主题、关系、机制或设计问题。
+- 标题 MUST NOT 仅使用“介绍”“说明”“其他”“杂项”“相关内容”。
+
+### 6.4.2 命名与链接
+
+1. 新目录和文件 MUST 使用小写 ASCII `kebab-case`，例如 `power-management/`、`flash-and-run.md`。
+2. 已发布的中文路径 MAY 为 URL 兼容保留；新文件名 MUST NOT 使用空格、含义不明的数字串或临时后缀。
+3. 图片文件名 SHOULD 描述内容和状态，例如 `flash-success.png`。
+4. 内部文档引用 MUST 使用可点击的相对链接，MUST NOT 只写文件名或文档名。
+5. 链接目标、标题锚点和路径大小写 MUST 在 Linux 构建环境中验证。
+6. 外链 SHOULD 指向官方、稳定、版本匹配的来源。
+7. 页面移动或重命名 MUST 提供重定向或迁移映射。
+
+## 6.5 写作与格式
+
+1. 文档 MUST 使用简体中文和中文标点；代码、命令、路径、符号和正式产品名保持原样。
+2. 句子 SHOULD 简洁，主动语态优先；一步 SHOULD 只表达一个主要动作。
+3. 命令 MUST 放入带语言标记的代码块，并 SHOULD 可直接复制。
+4. 命令前 MUST 说明执行目录、权限和环境；命令后 SHOULD 给出关键预期输出。
+5. 占位符 MUST 使用可识别形式，例如 `<sdk-root>`，并 MUST 在首次出现时解释。
+6. 表格 MUST 有明确表头；复杂流程 SHOULD 优先使用列表、分段或图，而不是超宽表格。
+7. 原始 HTML SHOULD NOT 用于可由 Markdown 或 MkDocs 组件表达的内容。
+8. 警告 MUST 放在危险动作之前，MUST 说明风险、影响对象和恢复方式。
+
+## 6.6 图片与可视化内容
+
+文档 SHOULD 优先使用可检索、可复制、可访问且易于版本维护的文字、代码和结构化数据。图片数量本身 MUST NOT 作为质量指标；作者和 Reviewer MUST 判断每张图片是否传递了文字难以等效表达的必要信息。
+
+1. 命令、代码、配置、日志、错误信息、路径和参数表 MUST 使用文本、代码块或表格表达，MUST NOT 只以截图承载。
+2. 图片 SHOULD 用于界面位置、硬件接线、物理状态、波形、空间关系或其他视觉关系确实影响理解和操作的场景。
+3. 图片中的关键结论、操作目标和完成判据 MUST 同时出现在正文、图注或有效替代文本中，MUST NOT 要求用户仅凭观察图片推断。
+4. 架构图、流程图和时序图 SHOULD 优先使用 Mermaid、PlantUML、SVG 或其他可编辑、可版本管理的源格式。导出图片时，源文件 MUST 与导出产物建立明确映射并一同维护。
+5. 线条图和图标 SHOULD 使用 SVG；需要保留像素细节的截图或照片 MAY 使用 PNG、JPEG 或项目批准的格式。动画和视频 MUST NOT 成为关键步骤或结论的唯一载体。
+6. 截图 MUST 裁剪到完成任务所需的最小区域，SHOULD 标注适用产品、软件版本、操作系统或界面状态。装饰性边框、无关桌面区域和重复截图 SHOULD NOT 保留。
+7. 每张有信息意义的图片 MUST 提供描述其目的和关键内容的替代文本；装饰性图片 MAY 使用空替代文本，并 SHOULD 能在不影响理解的情况下删除。
+8. 图片中的账号、密钥、令牌、内部地址、个人数据、设备唯一标识和其他受限信息 MUST 在提交前不可逆地移除或脱敏，MUST NOT 只使用可撤销的标注层遮盖。
+9. 图片包含文字时，正文 MUST 提供等价信息。面向多语言发布的页面 SHOULD 避免把大段可翻译文字固化在图片中；确有必要时 MUST 保留可编辑源文件和对应语言版本。
+10. 同一视觉资产 SHOULD 由单一来源复用，MUST NOT 在多个下游页面复制后独立维护。修改共享图片时 MUST Review 所有引用页面的适用性。
+11. 项目 SHOULD 规定图片格式、最大文件大小、像素尺寸和压缩策略。优化 MUST NOT 造成文字、引脚、波形或界面状态无法辨认。
+12. 图片 MUST 与页面具有相同的 Owner、版本和生命周期边界。产品界面、接线、版本或事实变化后，过期图片 MUST 更新、降级为待复核或删除。

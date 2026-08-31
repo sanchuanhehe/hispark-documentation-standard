@@ -1,0 +1,113 @@
+version: 1
+
+project:
+  title: HiSpark 文档规范
+  subtitle: 基于 Diátaxis 的 SDK 文档设计、质量与治理要求
+  description: HiSpark SDK 类项目的文档信息架构、创作、验证、Review、CI 与持续维护规范。
+  authors:
+    - name: HiSpark 文档规范维护者
+  keywords:
+    - HiSpark
+    - Diátaxis
+    - documentation
+    - MyST
+    - LaTeX
+  date: 2026-08-29
+  settings:
+    myst_to_tex:
+      code_style: listings
+  exclude:
+    - README.md
+    - latex/**
+    - scripts/**
+    - node_modules/**
+    - exports/**
+  toc:
+    - file: docs/index.md
+    - file: docs/preface.md
+    - title: 第一部分　基础
+      children:
+        - file: docs/part-1-foundations/01-scope-and-purpose.md
+        - file: docs/part-1-foundations/02-normative-language.md
+        - file: docs/part-1-foundations/03-terminology.md
+        - file: docs/part-1-foundations/04-core-principles.md
+    - title: 第二部分　设计与创作
+      children:
+        - file: docs/part-2-authoring/05-information-architecture.md
+        - file: docs/part-2-authoring/06-authoring.md
+        - file: docs/part-2-authoring/07-upstream-downstream.md
+        - file: docs/part-2-authoring/08-specialized-content.md
+    - title: 第三部分　质量保证
+      children:
+        - file: docs/part-3-quality/09-validation-and-testing.md
+        - file: docs/part-3-quality/10-review-and-merge.md
+        - file: docs/part-3-quality/11-daily-ci.md
+    - title: 第四部分　治理与落地
+      children:
+        - file: docs/part-4-governance/12-governance-and-maintenance.md
+        - file: docs/part-4-governance/13-migration.md
+        - file: docs/part-4-governance/14-conformance-checklist.md
+    - title: 参考资料与附录
+      children:
+        - file: docs/backmatter/15-references.md
+        - file: docs/backmatter/appendix-a-directory-mapping.md
+  exports:
+    - id: standard-pdf
+      format: pdf
+      template: ./latex/plain_latex_book_zh
+      output: exports/hispark-documentation-standard.pdf
+      title: HiSpark 文档规范
+      subtitle: 基于 Diátaxis 的 SDK 文档设计、质量与治理要求
+      articles: &book-articles
+        - file: docs/preface.md
+          level: 0
+        - file: docs/part-1-foundations/01-scope-and-purpose.md
+          level: 0
+        - file: docs/part-1-foundations/02-normative-language.md
+          level: 0
+        - file: docs/part-1-foundations/03-terminology.md
+          level: 0
+        - file: docs/part-1-foundations/04-core-principles.md
+          level: 0
+        - file: docs/part-2-authoring/05-information-architecture.md
+          level: 0
+        - file: docs/part-2-authoring/06-authoring.md
+          level: 0
+        - file: docs/part-2-authoring/07-upstream-downstream.md
+          level: 0
+        - file: docs/part-2-authoring/08-specialized-content.md
+          level: 0
+        - file: docs/part-3-quality/09-validation-and-testing.md
+          level: 0
+        - file: docs/part-3-quality/10-review-and-merge.md
+          level: 0
+        - file: docs/part-3-quality/11-daily-ci.md
+          level: 0
+        - file: docs/part-4-governance/12-governance-and-maintenance.md
+          level: 0
+        - file: docs/part-4-governance/13-migration.md
+          level: 0
+        - file: docs/part-4-governance/14-conformance-checklist.md
+          level: 0
+        - file: docs/backmatter/15-references.md
+          level: 0
+        - file: docs/backmatter/appendix-a-directory-mapping.md
+          level: 0
+    - id: standard-tex
+      format: tex
+      template: ./latex/plain_latex_book_zh
+      output: exports/hispark-documentation-standard-tex.zip
+      title: HiSpark 文档规范
+      subtitle: 基于 Diátaxis 的 SDK 文档设计、质量与治理要求
+      articles: *book-articles
+  downloads:
+    - id: standard-pdf
+      title: 下载 PDF 版本
+    - id: standard-tex
+      title: 下载 LaTeX 源文件
+
+site:
+  template: book-theme
+  title: HiSpark 文档规范
+  options:
+    logo_text: HiSpark 文档规范

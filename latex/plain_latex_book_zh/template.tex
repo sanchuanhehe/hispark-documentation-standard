@@ -1,0 +1,110 @@
+\documentclass[UTF8,fontset=none,a4paper,11pt,oneside]{ctexbook}
+
+% HiSpark document typography. The build script makes installed system fonts
+% discoverable to XeLaTeX without embedding machine-specific paths here.
+\setmainfont{Arial}
+\setsansfont{Arial}
+\setmonofont{Arial}
+\setCJKmainfont{Microsoft YaHei}
+\setCJKsansfont{Microsoft YaHei}
+\setCJKmonofont{Microsoft YaHei}
+
+\usepackage[top=2.4cm,bottom=2.4cm,left=2.6cm,right=2.6cm]{geometry}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{changepage}
+\usepackage{framed}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage[htt]{hyphenat}
+
+\bibliographystyle{abbrvnat}
+
+\setlist[itemize]{noitemsep,topsep=3pt}
+\setlist[enumerate]{itemsep=2pt,topsep=3pt}
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.35em}
+\setlength{\emergencystretch}{2em}
+\renewcommand{\arraystretch}{1.25}
+
+\definecolor{hisparkblue}{HTML}{1F4E79}
+\definecolor{hisparkshade}{HTML}{F3F6F9}
+\definecolor{codebackground}{HTML}{F7F7F7}
+
+\hypersetup{
+  unicode=true,
+  colorlinks=true,
+  linkcolor=hisparkblue,
+  citecolor=hisparkblue,
+  urlcolor=hisparkblue,
+  pdftitle={[-doc.title-]}
+}
+
+\lstset{
+  basicstyle=\small\ttfamily,
+  backgroundcolor=\color{codebackground},
+  frame=single,
+  framerule=0.2pt,
+  rulecolor=\color{black!20},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true
+}
+\lstdefinelanguage{text}{}
+\lstdefinelanguage{yaml}{
+  morecomment=[l]{\#},
+  morestring=[b]",
+  morestring=[b]',
+  sensitive=true
+}
+
+\renewenvironment{quote}{%
+  \def\FrameCommand{%
+    \hspace{1pt}%
+    {\color{hisparkblue}\vrule width 2pt}%
+    {\color{hisparkshade}\vrule width 4pt}%
+    \colorbox{hisparkshade}%
+  }%
+  \MakeFramed{\advance\hsize-\width\FrameRestore}%
+  \noindent\hspace{-8pt}%
+  \begin{adjustwidth}{0pt}{0pt}%
+  \vspace{2pt}%
+}{%
+  \vspace{2pt}\end{adjustwidth}\endMakeFramed%
+}
+
+[- IMPORTS -]
+
+\title{\Huge\bfseries [-doc.title-][# if doc.subtitle #]\\[0.8em]\Large [-doc.subtitle-][# endif #]}
+\author{
+[# for author in doc.authors #]
+  [# if not loop.first #]、[# endif #][-author.name-]
+[# endfor #]
+}
+\date{2026年8月29日}
+
+\begin{document}
+\sloppy
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\mainmatter
+
+[- CONTENT -]
+
+[# if doc.bibliography #]
+\bibliography{[- doc.bibliography | join(", ") -]}
+[# endif #]
+
+\end{document}
