@@ -10,3 +10,5 @@ title: '15. 参考资料'
 - [BCP 14](https://www.rfc-editor.org/info/bcp14)
 - [RFC 2119](https://www.rfc-editor.org/info/rfc2119/)
 - [RFC 8174](https://www.rfc-editor.org/info/rfc8174/)
+- [RISC-V Instruction Set Manual](https://github.com/riscv/riscv-isa-manual)
+- [RISC-V ISA Manual：规范性规则标记方法](https://github.com/riscv/riscv-isa-manual/blob/main/tagging_normative_rules.adoc)
