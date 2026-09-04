@@ -1,0 +1,4 @@
+interface:
+  display_name: "HiSpark 文档编写"
+  short_description: "按 HiSpark 规范设计、编写或重构中文技术文档页面"
+  default_prompt: "Use $hispark-doc-author to classify and draft this HiSpark documentation page."

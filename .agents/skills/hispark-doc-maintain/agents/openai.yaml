@@ -1,0 +1,4 @@
+interface:
+  display_name: "HiSpark 文档维护"
+  short_description: "治理文档生命周期、上游同步、Owner、Sample 契约与迁移"
+  default_prompt: "Use $hispark-doc-maintain to audit and plan maintenance for this documentation set."

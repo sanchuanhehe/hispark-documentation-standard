@@ -1,0 +1,4 @@
+interface:
+  display_name: "HiSpark 文档审查"
+  short_description: "按规范审查文档变更并输出证据化、可执行的问题清单"
+  default_prompt: "Use $hispark-doc-review to review this documentation change against the HiSpark standard."

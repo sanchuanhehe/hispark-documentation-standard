@@ -1,0 +1,4 @@
+interface:
+  display_name: "HiSpark 文档验证"
+  short_description: "验证文档构建、技术声明、测试覆盖率与发布质量门禁"
+  default_prompt: "Use $hispark-doc-verify to validate this documentation change and its evidence."
