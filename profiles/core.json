@@ -66,12 +66,12 @@
     {
       "kind": "line",
       "path": "docs/part-3-quality/10-review-and-merge.md",
-      "text": "3. 解释性内容如存在，围绕相邻条款针对的实际文档问题说明背景、成因、作用机制和预期效果，且删除后不改变符合性结论；"
+      "text": "解释性内容如存在，Reviewer MUST 按第 2.2 节执行删除测试，并核对背景、成因、作用机制和预期效果。"
     },
     {
       "kind": "line",
       "path": "docs/part-4-governance/14-conformance-checklist.md",
-      "text": "- [ ] 解释性内容如存在，说明实际问题、成因、条款作用和预期效果，且通过删除测试。"
+      "text": "- [ ] 解释性内容：核对实际问题、成因、作用机制与预期效果，并执行删除测试，见[第 2.2 节](../part-1-foundations/02-normative-language.md)。"
     },
     {
       "kind": "line",

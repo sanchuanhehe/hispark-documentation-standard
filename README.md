@@ -2,6 +2,22 @@
 
 本仓库使用 MyST Markdown 维护规范正文，并通过 LaTeX 输出正式 PDF。规范正文位于 `docs/`，导航与导出配置位于 `myst.yml`。
 
+## V1.2 结构整改试行
+
+日常阅读从[十项基础要求](docs/part-1-foundations/04-core-principles.md)开始。作者进入[写作入口与模板](docs/handbook/write-a-page.md)，再按页面内容查阅专项条款。Reviewer 使用[本次文档变更清单](docs/part-4-governance/14-conformance-checklist.md)，项目负责人使用同页的项目与发布清单。
+
+本次主要减少首次阅读与重复核对的负担：前言缩短、导航按任务分组、模板集中、Review 和检查表引用规则定义处。完整章节号与源文件路径保留。基础摘编是阅读入口，不是新的符合性等级；完整条款强度不变，渐进采用需要披露未完成项。
+
+生成短篇基础阅读摘编：
+
+```bash
+npm run build:pdf:basics
+```
+
+产物为 `exports/hispark-documentation-basics.pdf` 及对应 `-tex.zip`。构建从同一份第 4 章源文件提取正文，省略解释块，附上第 2.1 节关键词定义；离线摘编以章号指向完整规则，不生成指向未收录章节的失效链接。
+
+建议先用一篇真实 Sample 实践指南试行，按[第 13 章](docs/part-4-governance/13-migration.md)记录找模板时间、需口头解释的问题和首轮评审结果；尚未进行用户试验时，不宣称采用效率已提高。
+
 ## 构建 Profile
 
 工程提供两种可复现构建：
@@ -60,7 +76,7 @@ npm run build:pdf:core
 npm run build:tex:core
 ```
 
-一次生成两个 Profile 的全部产物：
+一次生成两个 Profile 的全部产物和基础阅读摘编：
 
 ```bash
 npm run build:all:profiles
@@ -81,6 +97,7 @@ npm run start:core
 |---|---|---|---|---|
 | Annotated | `_build/html/` | `_build/site/` | `exports/hispark-documentation-standard.pdf` | `exports/hispark-documentation-standard-tex.zip` |
 | Core | `_build/html-core/` | `_build/site-core/` | `exports/hispark-documentation-standard-core.pdf` | `exports/hispark-documentation-standard-core-tex.zip` |
+| 基础阅读摘编 | 网站基础规范入口 | 复用第 4 章源文件 | `exports/hispark-documentation-basics.pdf` | `exports/hispark-documentation-basics-tex.zip` |
 
 ## 工程结构
 

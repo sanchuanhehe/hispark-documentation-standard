@@ -1,33 +1,43 @@
 ---
 title: HiSpark 文档规范
-short_title: 首页
+short_title: 从这里开始
 ---
 
-本文档定义 HiSpark 文档规范，并提供适合日常浏览、正式评审、归档和发布的多种输出形式。规范不要求采用特定的标记语言、站点生成器或排版工具。
+先读[基础规范：十项共同要求](part-1-foundations/04-core-principles.md)，再选择当前任务。完整条款供按需查阅，无须为开始写一篇文档先通读所有章节。
 
 :::{admonition} 文档状态
 :class: note
 
-- 版本：V1.1（草案）
+- 版本：V1.2（结构整改试行稿）
 - 状态：供评审与试点使用
-- 基线日期：2026-08-29
+- 整改日期：2026-09-10
 - 适用对象：采用本规范的 HiSpark SDK 类项目
-- 适用原则：具体产品、芯片、单板和能力范围由各项目显式声明
+- 产品、芯片、单板及能力由采用项目明确声明
 :::
 
-## 如何阅读
+## 我现在要做什么
 
-| 部分 | 内容 | 主要读者 |
-|---|---|---|
-| 第一部分：基础 | 适用范围、规范性语言、术语和核心原则 | 所有参与者 |
-| 第二部分：设计与创作 | 信息架构、页面写作、上游复用和专项文档 | 作者、Maintainer、领域 Owner |
-| 第三部分：质量保证 | 验证、测试、Review、合入门禁和 Daily CI | Reviewer、测试/CI Owner |
-| 第四部分：治理与落地 | 角色、持续维护、迁移方案和符合性检查 | Maintainer、发布 Owner、项目负责人 |
+| 当前任务 | 最短阅读路径 |
+|---|---|
+| 第一次采用规范 | [十项基础要求](part-1-foundations/04-core-principles.md) → [试点与迁移](part-4-governance/13-migration.md) |
+| 写一篇文档 | [写作入口与模板](handbook/write-a-page.md) → 对应专项要求 |
+| 审查一次修改 | [Review 要求](part-3-quality/10-review-and-merge.md) → [文档变更检查](part-4-governance/14-conformance-checklist.md) |
+| 验证文档或 Sample | [验证与测试](part-3-quality/09-validation-and-testing.md) → [分层执行要求](#sample-execution-levels) |
+| 维护项目或准备发布 | [项目与发布检查](part-4-governance/14-conformance-checklist.md) → [Daily CI](part-3-quality/11-daily-ci.md)、[维护契约](part-4-governance/12-governance-and-maintenance.md) |
+| 查关键词或正式术语 | [规范性语言](part-1-foundations/02-normative-language.md)、[术语](part-1-foundations/03-terminology.md) |
 
-建议首次使用者先阅读[前言](preface.md)，再按当前工作职责进入相应部分。规范性要求以正文中大写的 BCP 14 关键词为准。
+## 哪些要求对我适用
 
-## 输出形式
+基础要求适用于所有内容页；专项要求由页面的实际内容触发。例如 Sample 阅读 Sample 专项，硬件运行声明需要相应实板证据，纯概念页按技术评审及必要静态核对验证。
 
-- 网站：用于日常浏览、搜索和跨页面导航；
-- PDF：用于正式评审、发布归档和离线阅读；
-- 可编辑源文件：用于内容审查、版本管理、二次发布和长期可追溯归档。
+作者负责提供页面事实和证据；文档、领域、测试与发布负责人按职责完成评审和项目治理。把项目检查分配给负责人，不会取消其中的必需要求。
+
+条款以大写 BCP 14 关键词和适用上下文为准。基础阅读摘编、角色入口和模板帮助使用规范；它们不是降低要求的新符合性等级。具体依据见[适用范围](part-1-foundations/01-scope-and-purpose.md)。
+
+## 阅读与下载版本
+
+- **基础阅读摘编**：只导出十项共同要求，适合首次阅读；详细规则按章号查完整规范。
+- **完整版本**：保留所有详细条款、示例及解释层，用于查阅和正式评审。
+- **Core 版本**：延续既有可选构建范围，排除解释层管理条款及对应内容；它与基础阅读摘编是不同输出。
+
+网站按任务组织导航，完整 PDF 保留稳定章号，方便已有引用继续使用。[前言](preface.md)介绍本次试行的目的。

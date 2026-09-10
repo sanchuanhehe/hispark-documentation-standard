@@ -1,4 +1,4 @@
-.PHONY: install start start-core site site-core html html-core pdf pdf-core tex tex-core check check-core all-profiles clean
+.PHONY: install start start-core site site-core html html-core pdf pdf-core pdf-basics tex tex-core check check-core all-profiles clean
 
 install:
 	npm install
@@ -26,6 +26,9 @@ pdf:
 
 pdf-core:
 	npm run build:pdf:core
+
+pdf-basics:
+	npm run build:pdf:basics
 
 tex:
 	npm run build:tex

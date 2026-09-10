@@ -11,6 +11,7 @@ ARCHIVE = ROOT / "exports" / "hispark-documentation-standard-tex.zip"
 BUILD = ROOT / "_build" / "latex"
 PDF = ROOT / "exports" / "hispark-documentation-standard.pdf"
 PREFIX = "hispark-documentation-standard-tex"
+EDITION = "full"
 REQUIRED_FONTS = ("Arial", "Microsoft YaHei")
 
 
@@ -54,6 +55,16 @@ def patch_generated_structure() -> None:
         tex = re.sub(r"\\subsection\{\d+\.\d+\.\d+\s*", r"\\subsection{", tex)
         path.write_text(tex, encoding="utf-8")
 
+    main = BUILD / f"{PREFIX}.tex"
+    if EDITION == "basics":
+        text = main.read_text(encoding="utf-8")
+        # Single-article exports embed the body in the main file. Keep source
+        # labels (4.1–4.10) without adding the book's automatic 0.x numbering.
+        text = text.replace("\\mainmatter", "\\mainmatter\n\\setcounter{secnumdepth}{-1}", 1)
+        text = text.replace("\\begingroup\n\\small\n\\tableofcontents\n\\endgroup", "")
+        main.write_text(text, encoding="utf-8")
+        return
+
     preface = BUILD / f"{PREFIX}-preface.tex"
     text = preface.read_text(encoding="utf-8")
     text = text.replace("\\chapter{前言}", "\\chapter*{前言}\\addcontentsline{toc}{chapter}{前言}", 1)
@@ -64,7 +75,6 @@ def patch_generated_structure() -> None:
     text = text.replace("\\chapter{附录 A：一级目录到 Diátaxis 的推荐映射}", "\\chapter{一级目录到 Diátaxis 的推荐映射}", 1)
     appendix.write_text(text, encoding="utf-8")
 
-    main = BUILD / f"{PREFIX}.tex"
     text = main.read_text(encoding="utf-8")
     preface_include = f"\\include{{{PREFIX}-preface}}"
     text = text.replace(
@@ -199,9 +209,17 @@ def compile_pdf() -> None:
 
 
 def main() -> None:
+    global ARCHIVE, BUILD, PDF, PREFIX, EDITION
     parser = ArgumentParser()
     parser.add_argument("--tex-only", action="store_true")
+    parser.add_argument("--edition", choices=("full", "basics"), default="full")
     args = parser.parse_args()
+    EDITION = args.edition
+    if EDITION == "basics":
+        PREFIX = "hispark-documentation-basics-tex"
+        ARCHIVE = ROOT / "exports" / f"{PREFIX}.zip"
+        PDF = ROOT / "exports" / "hispark-documentation-basics.pdf"
+        BUILD = ROOT / "_build" / "latex-basics"
 
     if not ARCHIVE.exists():
         raise FileNotFoundError(f"run MyST TeX export first: {ARCHIVE}")

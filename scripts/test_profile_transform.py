@@ -20,6 +20,7 @@ from profile_transform import (  # noqa: E402
     read_documents,
     strip_fenced_code_blocks,
 )
+from build_basics import reading_extract  # noqa: E402
 
 
 class SelectorTests(unittest.TestCase):
@@ -97,6 +98,31 @@ class SelectorTests(unittest.TestCase):
             )
 
 
+class ReadingExtractTests(unittest.TestCase):
+    def test_extract_keeps_all_ten_source_requirement_headings(self) -> None:
+        text = reading_extract()
+        self.assertEqual(re.findall(r"(?m)^## 4\.(\d+) ", text),
+                         [str(number) for number in range(1, 11)])
+
+    def test_extract_preserves_language_definition_and_scope_boundary(self) -> None:
+        text = reading_extract()
+        self.assertIn('The key words', text)
+        self.assertIn('本摘编不构成独立符合性等级', text)
+        self.assertIn('RFC8174', text)
+
+    def test_extract_has_no_omitted_explanation_blocks_or_local_links(self) -> None:
+        text = reading_extract()
+        self.assertNotIn(':::{admonition}', text)
+        self.assertNotIn('## 2.2', text)
+        for target in re.findall(r"\]\(([^)]+)\)", text):
+            self.assertRegex(target, r"^https?://")
+
+    def test_extract_does_not_mutate_canonical_documents(self) -> None:
+        before = read_documents(ROOT)
+        reading_extract()
+        self.assertEqual(before, read_documents(ROOT))
+
+
 class RepositoryProfileTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -152,7 +178,7 @@ class RepositoryProfileTests(unittest.TestCase):
         self.assertEqual(core_labels, annotated_labels)
         self.assertEqual(core_targets, annotated_targets)
         self.assertEqual(len(core_labels), 5)
-        self.assertEqual(sum(core_targets.values()), 5)
+        self.assertTrue(set(core_targets).issubset(core_labels))
 
 
 if __name__ == "__main__":

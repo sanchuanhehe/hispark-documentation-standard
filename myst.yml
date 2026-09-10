@@ -12,7 +12,7 @@ project:
     - documentation
     - MyST
     - LaTeX
-  date: 2026-08-29
+  date: 2026-09-10
   settings:
     myst_to_tex:
       code_style: listings
@@ -26,31 +26,30 @@ project:
     - exports/**
   toc:
     - file: docs/index.md
-    - file: docs/preface.md
-    - title: 第一部分　基础
-      children:
-        - file: docs/part-1-foundations/01-scope-and-purpose.md
-        - file: docs/part-1-foundations/02-normative-language.md
-        - file: docs/part-1-foundations/03-terminology.md
-        - file: docs/part-1-foundations/04-core-principles.md
-    - title: 第二部分　设计与创作
+    - file: docs/part-1-foundations/04-core-principles.md
+    - file: docs/handbook/write-a-page.md
+    - title: 写作与专项：按内容查阅
       children:
         - file: docs/part-2-authoring/05-information-architecture.md
         - file: docs/part-2-authoring/06-authoring.md
         - file: docs/part-2-authoring/07-upstream-downstream.md
         - file: docs/part-2-authoring/08-specialized-content.md
-    - title: 第三部分　质量保证
+    - title: 审查与验证：处理本次变更
       children:
         - file: docs/part-3-quality/09-validation-and-testing.md
         - file: docs/part-3-quality/10-review-and-merge.md
-        - file: docs/part-3-quality/11-daily-ci.md
-    - title: 第四部分　治理与落地
+        - file: docs/part-4-governance/14-conformance-checklist.md
+    - title: 项目维护：负责人查阅
       children:
+        - file: docs/part-3-quality/11-daily-ci.md
         - file: docs/part-4-governance/12-governance-and-maintenance.md
         - file: docs/part-4-governance/13-migration.md
-        - file: docs/part-4-governance/14-conformance-checklist.md
-    - title: 参考资料与附录
+    - title: 规范依据与阅读说明
       children:
+        - file: docs/preface.md
+        - file: docs/part-1-foundations/01-scope-and-purpose.md
+        - file: docs/part-1-foundations/02-normative-language.md
+        - file: docs/part-1-foundations/03-terminology.md
         - file: docs/backmatter/15-references.md
         - file: docs/backmatter/appendix-a-directory-mapping.md
   exports:
@@ -94,6 +93,8 @@ project:
         - file: docs/backmatter/15-references.md
           level: 0
         - file: docs/backmatter/appendix-a-directory-mapping.md
+          level: 0
+        - file: docs/handbook/write-a-page.md
           level: 0
     - id: standard-tex
       format: tex

@@ -5,6 +5,7 @@ from collections import Counter
 from pathlib import Path
 import re
 import sys
+from urllib.parse import unquote, urlsplit
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -23,6 +24,7 @@ from profile_transform import (  # noqa: E402
 EXPECTED = [
     "docs/index.md",
     "docs/preface.md",
+    "docs/handbook/write-a-page.md",
     "docs/part-1-foundations/01-scope-and-purpose.md",
     "docs/part-1-foundations/02-normative-language.md",
     "docs/part-1-foundations/03-terminology.md",
@@ -70,6 +72,23 @@ def validate(profile: str) -> None:
     duplicates = [label for label, count in labels.items() if count > 1]
     if duplicates:
         fail(f"duplicate explicit labels: {duplicates}")
+
+    # Editorial additions may change heading and reference counts. Validate
+    # actual destinations and navigation membership instead of frozen totals.
+    config = (ROOT / "myst.yml").read_text(encoding="utf-8")
+    toc = config.split("  toc:\n", 1)[1].split("  exports:\n", 1)[0]
+    toc_files = re.findall(r"(?m)^\s+- file: (docs/\S+\.md)$", toc)
+    if Counter(toc_files) != Counter(EXPECTED):
+        fail("navigation must include every document exactly once")
+    for relative, text in documents.items():
+        text = strip_fenced_code_blocks(text, relative)
+        for destination in re.findall(r"\]\(([^\s)]+)\)", text):
+            url = urlsplit(destination)
+            if url.scheme or url.netloc or not url.path:
+                continue
+            target = (ROOT / relative).parent / unquote(url.path)
+            if not target.is_file():
+                fail(f"missing local link in {relative}: {destination}")
 
     combined = "\n".join(documents[relative] for relative in EXPECTED)
     try:
@@ -141,14 +160,10 @@ def validate(profile: str) -> None:
     if repeated:
         fail(f"duplicate long paragraphs detected: {repeated[:3]}")
 
-    second_level = len(re.findall(r"(?m)^## ", combined_without_code))
-    third_level = len(re.findall(r"(?m)^### ", combined_without_code))
-    expected_headings = (47, 18) if profile == "annotated" else (46, 16)
-    if (second_level, third_level) != expected_headings:
-        fail(
-            f"unexpected heading counts for {profile}: "
-            f"expected={expected_headings}, actual={(second_level, third_level)}"
-        )
+    basics = documents["docs/part-1-foundations/04-core-principles.md"]
+    requirements = re.findall(r"(?m)^## 4\.(\d+) ", basics)
+    if requirements != [str(number) for number in range(1, 11)]:
+        fail("the basic reading entry must contain the ten ordered requirements")
 
     manifest = load_manifest(ROOT, "core")
     if profile == "annotated":
@@ -178,10 +193,12 @@ def validate(profile: str) -> None:
         if "解释说明" not in combined_without_code:
             fail("core profile must retain the Diátaxis explanation document type")
 
-    if len(labels) != 5 or len(targets) != 5:
-        fail(
-            f"unexpected cross-reference counts: labels={len(labels)}, targets={len(targets)}"
-        )
+    required_labels = {
+        "sample-test-coverage", "sample-execution-levels",
+        "sample-maintenance-contract", "review-requirements", "definition-of-done",
+    }
+    if not required_labels.issubset(labels):
+        fail("a published semantic reference label was removed")
 
     print(
         f"Validated {profile} profile: {len(EXPECTED)} pages, {len(labels)} labels, "
