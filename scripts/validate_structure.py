@@ -99,7 +99,7 @@ def validate(profile: str) -> None:
         r"(?ms)^:::\{admonition\} ([^\n]*非规范性[^\n]*)\n.*?^:::$",
         combined_without_code,
     )
-    expected_blocks = 10 if profile == "annotated" else 0
+    expected_blocks = 11 if profile == "annotated" else 0
     if len(informative_blocks) != expected_blocks:
         fail(
             f"{profile} profile requires {expected_blocks} informative blocks, "
@@ -172,7 +172,7 @@ def validate(profile: str) -> None:
         if "hispark-profile:" in combined_without_code:
             fail("profile markers must not be embedded in source documents")
         _, summary = apply_manifest(documents, manifest)
-        if summary.selector_count != 15:
+        if summary.selector_count != 16:
             fail(f"core profile selector count changed unexpectedly: {summary.selector_count}")
     else:
         forbidden = (

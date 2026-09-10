@@ -136,8 +136,8 @@ class RepositoryProfileTests(unittest.TestCase):
 
     def test_manifest_shape_is_deliberate(self) -> None:
         kinds = Counter(selector["kind"] for selector in self.manifest["selectors"])
-        self.assertEqual(kinds, {"section": 1, "admonition": 10, "line": 4})
-        self.assertEqual(self.summary.selector_count, 15)
+        self.assertEqual(kinds, {"section": 1, "admonition": 11, "line": 4})
+        self.assertEqual(self.summary.selector_count, 16)
         self.assertEqual(len(self.summary.changed_files), 12)
 
     def test_transform_does_not_mutate_annotated_documents(self) -> None:

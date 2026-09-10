@@ -174,7 +174,7 @@ def prepare_shadow(shadow: Path, profile: str, include_exports: bool) -> dict | 
         write_documents(shadow, core)
         write_core_config(shadow / "myst.yml", manifest, include_exports)
 
-        if summary.selector_count != 15 or len(summary.changed_files) != 12:
+        if summary.selector_count != 16 or len(summary.changed_files) != 12:
             raise ProfileError(
                 "unexpected Core transformation scope: "
                 f"selectors={summary.selector_count}, files={len(summary.changed_files)}"

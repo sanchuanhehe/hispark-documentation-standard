@@ -21,6 +21,11 @@
     {
       "kind": "admonition",
       "path": "docs/part-1-foundations/04-core-principles.md",
+      "title": "背景与解决思路：代码即文档，文档即测试（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-1-foundations/04-core-principles.md",
       "title": "背景与解决思路：跨产品能力被错误带入（非规范性）"
     },
     {
