@@ -1,11 +1,24 @@
+from __future__ import annotations
+
+from argparse import ArgumentParser
 from collections import Counter
 from pathlib import Path
 import re
 import sys
 
 
-ROOT = Path(__file__).resolve().parents[1]
-DOCS = ROOT / "docs"
+SCRIPT_DIR = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR.parent
+sys.path.insert(0, str(SCRIPT_DIR))
+
+from profile_transform import (  # noqa: E402
+    ProfileError,
+    apply_manifest,
+    load_manifest,
+    read_documents,
+    strip_fenced_code_blocks,
+)
+
 
 EXPECTED = [
     "docs/index.md",
@@ -34,94 +47,155 @@ def fail(message: str) -> None:
     raise SystemExit(1)
 
 
-def strip_code_fences(text: str) -> str:
-    return re.sub(r"(?ms)^```[^\n]*\n.*?^```[ \t]*$", "", text)
+def validate(profile: str) -> None:
+    documents = read_documents(ROOT)
+    actual = sorted(documents)
+    if actual != sorted(EXPECTED):
+        fail(f"unexpected document set: expected={sorted(EXPECTED)}, actual={actual}")
 
+    labels = Counter()
+    for relative in EXPECTED:
+        text = documents[relative]
+        if not text.startswith("---\n") or "\n---\n" not in text[4:]:
+            fail(f"missing frontmatter: {relative}")
+        if not re.search(r"(?m)^title:\s*.+$", text.split("---", 2)[1]):
+            fail(f"missing title in frontmatter: {relative}")
+        try:
+            text_without_code = strip_fenced_code_blocks(text, relative)
+        except ProfileError as error:
+            fail(str(error))
+        for label in re.findall(r"(?m)^\(([-a-z0-9]+)\)=$", text_without_code):
+            labels[label] += 1
 
-actual = sorted(str(path.relative_to(ROOT)) for path in DOCS.rglob("*.md"))
-if actual != sorted(EXPECTED):
-    fail(f"unexpected document set: expected={sorted(EXPECTED)}, actual={actual}")
+    duplicates = [label for label, count in labels.items() if count > 1]
+    if duplicates:
+        fail(f"duplicate explicit labels: {duplicates}")
 
-all_text = []
-labels = Counter()
-for relative in EXPECTED:
-    path = ROOT / relative
-    text = path.read_text(encoding="utf-8")
-    all_text.append(text)
-    if not text.startswith("---\n") or "\n---\n" not in text[4:]:
-        fail(f"missing MyST frontmatter: {relative}")
-    if not re.search(r"(?m)^title:\s*.+$", text.split("---", 2)[1]):
-        fail(f"missing title in frontmatter: {relative}")
-    if text.count("```") % 2:
-        fail(f"unbalanced code fences: {relative}")
-    for label in re.findall(r"(?m)^\(([-a-z0-9]+)\)=$", strip_code_fences(text)):
-        labels[label] += 1
-
-duplicates = [label for label, count in labels.items() if count > 1]
-if duplicates:
-    fail(f"duplicate explicit labels: {duplicates}")
-
-combined = "\n".join(all_text)
-combined_without_code = strip_code_fences(combined)
-
-informative_blocks = re.findall(
-    r"(?ms)^:::\{admonition\} ([^\n]*非规范性[^\n]*)\n.*?^:::$",
-    combined_without_code,
-)
-informative_title_pattern = re.compile(
-    r"^(背景与解决思路|实施提示|示例|反例)：[^（）\n]+（非规范性）$"
-)
-unknown_titles = sorted(
-    title for title in set(informative_blocks)
-    if not informative_title_pattern.fullmatch(title)
-)
-if unknown_titles:
-    fail(f"unknown informative admonition titles: {unknown_titles}")
-if len(informative_blocks) < 10:
-    fail(f"expected at least 10 informative blocks, found {len(informative_blocks)}")
-
-for match in re.finditer(
-    r"(?ms)^:::\{admonition\} ([^\n]*非规范性[^\n]*)\n(.*?)^:::$",
-    combined_without_code,
-):
-    title = match.group(1)
-    body = match.group(2)
-    if title.startswith("背景与解决思路："):
-        missing_sections = [
-            section
-            for section in ("**问题背景。**", "**解决机制。**", "**预期效果。**")
-            if section not in body
-        ]
-        if missing_sections:
-            fail(
-                f"informative block '{title}' lacks required explanatory sections: "
-                f"{missing_sections}"
-            )
-    keyword = re.search(
-        r"\b(MUST(?: NOT)?|SHALL(?: NOT)?|SHOULD(?: NOT)?|REQUIRED|RECOMMENDED|NOT RECOMMENDED|MAY|OPTIONAL)\b",
-        body,
+    combined = "\n".join(documents[relative] for relative in EXPECTED)
+    try:
+        combined_without_code = strip_fenced_code_blocks(combined, "combined documents")
+    except ProfileError as error:
+        fail(str(error))
+    informative_blocks = re.findall(
+        r"(?ms)^:::\{admonition\} ([^\n]*非规范性[^\n]*)\n.*?^:::$",
+        combined_without_code,
     )
-    if keyword:
+    expected_blocks = 10 if profile == "annotated" else 0
+    if len(informative_blocks) != expected_blocks:
         fail(
-            f"informative block '{title}' contains normative keyword: "
-            f"{keyword.group(1)}"
+            f"{profile} profile requires {expected_blocks} informative blocks, "
+            f"found {len(informative_blocks)}"
         )
 
-for target in re.findall(r"\]\(#([-a-z0-9]+)\)", combined_without_code):
-    if labels[target] != 1:
-        fail(f"cross-reference target must exist exactly once: {target}")
+    informative_title_pattern = re.compile(
+        r"^(背景与解决思路|实施提示|示例|反例)：[^（）\n]+（非规范性）$"
+    )
+    unknown_titles = sorted(
+        title
+        for title in set(informative_blocks)
+        if not informative_title_pattern.fullmatch(title)
+    )
+    if unknown_titles:
+        fail(f"unknown informative admonition titles: {unknown_titles}")
 
-paragraphs = [
-    re.sub(r"\s+", " ", paragraph.strip())
-    for paragraph in re.split(r"\n\s*\n", combined_without_code)
-    if len(paragraph.strip()) > 80
-    and not paragraph.lstrip().startswith(("---", "|", "```", "- "))
-]
-repeated = [paragraph for paragraph, count in Counter(paragraphs).items() if count > 1]
-if repeated:
-    fail(f"duplicate long paragraphs detected: {repeated[:3]}")
+    for match in re.finditer(
+        r"(?ms)^:::\{admonition\} ([^\n]*非规范性[^\n]*)\n(.*?)^:::$",
+        combined_without_code,
+    ):
+        title = match.group(1)
+        body = match.group(2)
+        if title.startswith("背景与解决思路："):
+            missing_sections = [
+                section
+                for section in ("**问题背景。**", "**解决机制。**", "**预期效果。**")
+                if section not in body
+            ]
+            if missing_sections:
+                fail(
+                    f"informative block '{title}' lacks required explanatory sections: "
+                    f"{missing_sections}"
+                )
+        keyword = re.search(
+            r"\b(MUST(?: NOT)?|SHALL(?: NOT)?|SHOULD(?: NOT)?|REQUIRED|"
+            r"RECOMMENDED|NOT RECOMMENDED|MAY|OPTIONAL)\b",
+            body,
+        )
+        if keyword:
+            fail(
+                f"informative block '{title}' contains normative keyword: "
+                f"{keyword.group(1)}"
+            )
 
-print(
-    f"Validated {len(EXPECTED)} MyST pages, {len(labels)} explicit labels, "
-    f"{len(informative_blocks)} informative blocks, and balanced code fences."
-)
+    targets = re.findall(r"\]\(#([-a-z0-9]+)\)", combined_without_code)
+    for target in targets:
+        if labels[target] != 1:
+            fail(f"cross-reference target must exist exactly once: {target}")
+
+    paragraphs = [
+        re.sub(r"\s+", " ", paragraph.strip())
+        for paragraph in re.split(r"\n\s*\n", combined_without_code)
+        if len(paragraph.strip()) > 80
+        and not paragraph.lstrip().startswith(("---", "|", "```", "- "))
+    ]
+    repeated = [paragraph for paragraph, count in Counter(paragraphs).items() if count > 1]
+    if repeated:
+        fail(f"duplicate long paragraphs detected: {repeated[:3]}")
+
+    second_level = len(re.findall(r"(?m)^## ", combined_without_code))
+    third_level = len(re.findall(r"(?m)^### ", combined_without_code))
+    expected_headings = (47, 18) if profile == "annotated" else (46, 16)
+    if (second_level, third_level) != expected_headings:
+        fail(
+            f"unexpected heading counts for {profile}: "
+            f"expected={expected_headings}, actual={(second_level, third_level)}"
+        )
+
+    manifest = load_manifest(ROOT, "core")
+    if profile == "annotated":
+        if combined_without_code.count("## 2.2 规范性条款与非规范性说明") != 1:
+            fail("annotated profile must contain section 2.2 exactly once")
+        if "hispark-profile:" in combined_without_code:
+            fail("profile markers must not be embedded in source documents")
+        _, summary = apply_manifest(documents, manifest)
+        if summary.selector_count != 15:
+            fail(f"core profile selector count changed unexpectedly: {summary.selector_count}")
+    else:
+        forbidden = (
+            "## 2.2 规范性条款与非规范性说明",
+            "背景与解决思路：",
+            "（非规范性）",
+            "删除测试",
+            "RISC-V Instruction Set Manual",
+            "RISC-V ISA Manual：规范性规则标记方法",
+        )
+        leaked = [token for token in forbidden if token in combined_without_code]
+        if leaked:
+            fail(f"core profile contains annotated-only content: {leaked}")
+        if ":::{admonition} 文档状态" not in documents["docs/index.md"]:
+            fail("core profile must retain the document-status admonition")
+        if "title: HiSpark 文档规范（Core Profile）" not in documents["docs/index.md"]:
+            fail("core profile home page must identify itself as Core")
+        if "解释说明" not in combined_without_code:
+            fail("core profile must retain the Diátaxis explanation document type")
+
+    if len(labels) != 5 or len(targets) != 5:
+        fail(
+            f"unexpected cross-reference counts: labels={len(labels)}, targets={len(targets)}"
+        )
+
+    print(
+        f"Validated {profile} profile: {len(EXPECTED)} pages, {len(labels)} labels, "
+        f"{len(targets)} references, {len(informative_blocks)} informative blocks, "
+        f"and balanced code fences."
+    )
+
+
+def main() -> None:
+    parser = ArgumentParser()
+    parser.add_argument("--profile", choices=("annotated", "core"), default="annotated")
+    args = parser.parse_args()
+    validate(args.profile)
+
+
+if __name__ == "__main__":
+    main()

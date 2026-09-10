@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "profile": "core",
+  "title": "HiSpark 文档规范（Core Profile）",
+  "subtitle": "核心规范：不含可选解释层",
+  "description": "排除第 2.2 节、非规范性解释块及只服务于解释层的检查项和参考资料。",
+  "frontmatter_titles": {
+    "docs/index.md": "HiSpark 文档规范（Core Profile）"
+  },
+  "selectors": [
+    {
+      "kind": "section",
+      "path": "docs/part-1-foundations/02-normative-language.md",
+      "heading": "## 2.2 规范性条款与非规范性说明"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-1-foundations/04-core-principles.md",
+      "title": "背景与解决思路：页面职责混杂（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-1-foundations/04-core-principles.md",
+      "title": "背景与解决思路：跨产品能力被错误带入（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-2-authoring/06-authoring.md",
+      "title": "背景与解决思路：图片难以随产品演进（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-2-authoring/07-upstream-downstream.md",
+      "title": "背景与解决思路：下游副本静默过时（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-2-authoring/08-specialized-content.md",
+      "title": "背景与解决思路：快速入门不断膨胀（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-3-quality/09-validation-and-testing.md",
+      "title": "背景与解决思路：构建成功被误写为运行成功（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-3-quality/09-validation-and-testing.md",
+      "title": "背景与解决思路：覆盖率因分母缺失而虚高（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-3-quality/10-review-and-merge.md",
+      "title": "背景与解决思路：笼统的“已 Review”掩盖责任缺口（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-3-quality/11-daily-ci.md",
+      "title": "背景与解决思路：没有文档提交也会发生漂移（非规范性）"
+    },
+    {
+      "kind": "admonition",
+      "path": "docs/part-4-governance/12-governance-and-maintenance.md",
+      "title": "背景与解决思路：Sample 的代码、页面与测试各自演进（非规范性）"
+    },
+    {
+      "kind": "line",
+      "path": "docs/part-3-quality/10-review-and-merge.md",
+      "text": "3. 解释性内容如存在，围绕相邻条款针对的实际文档问题说明背景、成因、作用机制和预期效果，且删除后不改变符合性结论；"
+    },
+    {
+      "kind": "line",
+      "path": "docs/part-4-governance/14-conformance-checklist.md",
+      "text": "- [ ] 解释性内容如存在，说明实际问题、成因、条款作用和预期效果，且通过删除测试。"
+    },
+    {
+      "kind": "line",
+      "path": "docs/backmatter/15-references.md",
+      "text": "- [RISC-V Instruction Set Manual](https://github.com/riscv/riscv-isa-manual)"
+    },
+    {
+      "kind": "line",
+      "path": "docs/backmatter/15-references.md",
+      "text": "- [RISC-V ISA Manual：规范性规则标记方法](https://github.com/riscv/riscv-isa-manual/blob/main/tagging_normative_rules.adoc)"
+    }
+  ]
+}

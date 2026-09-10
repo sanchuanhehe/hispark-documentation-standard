@@ -19,6 +19,7 @@ project:
   exclude:
     - README.md
     - latex/**
+    - profiles/**
     - scripts/**
     - node_modules/**
     - exports/**
