@@ -11,6 +11,25 @@
 
 第 2.2 节自身包含 BCP 14 规范性要求，因此 Core 是一个范围更小的独立符合性 Profile，不应称为“仅规范性内容版”。两种版本共享 `docs/` 中同一份正文；Core 构建根据 `profiles/core.json` 在 `_build/variants/` 中生成临时影子工程，不修改源文档。每个选择器必须在源文档中恰好命中一次，内容漂移、重复命中或未闭合指令块都会使构建失败。
 
+## 配套 Skills
+
+仓库在 `.agents/skills/` 提供四个可独立使用的 Agent Skill：
+
+| Skill | 适用任务 |
+|---|---|
+| `$hispark-doc-author` | 分类、编写或重构教程、实践指南、参考资料和解释说明 |
+| `$hispark-doc-review` | 审查页面、变更或 Pull Request，输出证据化问题清单和 Reviewer 缺口 |
+| `$hispark-doc-verify` | 验证文档构建、技术声明、Sample 覆盖、PR 门禁和 Daily CI |
+| `$hispark-doc-maintain` | 审计生命周期、上游同步、Owner、Sample 契约、发布复核和渐进迁移 |
+
+Skills 将本仓库 `docs/` 视为权威规范来源，入口文件保持精简，角色专属工作手册按需从各自 `references/` 加载。它们不预设具体芯片、产品、文档生成器或绝对路径；执行时应发现采用项目实际声明的工具和检查入口。
+
+支持仓库级 Skills 的 Agent 可以直接从 `.agents/skills/` 发现它们。也可以将需要的 Skill 目录复制到个人 Codex Skills 目录：
+
+```bash
+cp -R .agents/skills/hispark-doc-author "${CODEX_HOME:-$HOME/.codex}/skills/"
+```
+
 ## 环境要求
 
 - Node.js 20 或更高版本；
@@ -67,6 +86,7 @@ npm run start:core
 
 ```text
 .
+├── .agents/skills/       # 编写、审查、验证和维护治理 Skills
 ├── docs/                 # MyST 规范正文与前言
 ├── latex/                # LaTeX 输出和维护说明
 ├── profiles/             # 可选构建的失败关闭选择器清单

@@ -17,6 +17,7 @@ project:
     myst_to_tex:
       code_style: listings
   exclude:
+    - .agents/**
     - README.md
     - latex/**
     - profiles/**
