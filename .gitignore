@@ -3,6 +3,7 @@ _build/
 exports/
 .DS_Store
 __pycache__/
+.venv/
 *.aux
 *.fls
 *.fdb_latexmk

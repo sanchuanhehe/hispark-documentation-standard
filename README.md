@@ -50,6 +50,7 @@ cp -R .agents/skills/hispark-doc-author "${CODEX_HOME:-$HOME/.codex}/skills/"
 
 - Node.js 20 或更高版本；
 - npm；
+- Python 3.10 或更高版本；PDF 产物检查依赖 `requirements-pdf.txt` 中锁定的 pypdf；
 - MyST CLI（已通过 `package-lock.json` 锁定）；
 - 完整 TeX Live，包含 XeLaTeX、latexmk 和中文排版支持；
 - Microsoft YaHei（微软雅黑）和 Arial 字体。PDF 构建会在缺少任一字体时失败，不使用替代字体静默降级。
@@ -57,6 +58,9 @@ cp -R .agents/skills/hispark-doc-author "${CODEX_HOME:-$HOME/.codex}/skills/"
 ## 本地构建
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-pdf.txt
 npm install
 npm run check
 npm run build:pdf
@@ -64,6 +68,8 @@ npm run build:site
 npm run build:html
 npm run build:tex
 ```
+
+PDF 导出会将本书章节链接和显式锚点转换为文内跳转；命名具体节的链接定位到该节，范围链接定位到范围起点。构建会检查实际 PDF 的链接动作、目标页和正文点击区域，拒绝指向本地外部文件的链接或丢失的引用。`exports/*.links.json` 保存该次构建的来源与目标映射；可使用 `npm run check:pdf-links` 复查完整 PDF。基础摘编不收录的章节仍保留为普通文字引用。
 
 `npm run check` 会分别验证 Annotated 与 Core 的结构并执行两种严格站点构建；检查过程不依赖预先存在的 PDF/TeX 下载文件。
 

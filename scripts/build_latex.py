@@ -1,9 +1,13 @@
 from argparse import ArgumentParser
 from pathlib import Path
+import json
 import re
 import shutil
 import subprocess
 import zipfile
+
+from pdf_links import repair_links, resolve_destinations
+from validate_pdf_links import audit_pdf
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,6 +17,7 @@ PDF = ROOT / "exports" / "hispark-documentation-standard.pdf"
 PREFIX = "hispark-documentation-standard-tex"
 EDITION = "full"
 REQUIRED_FONTS = ("Arial", "Microsoft YaHei")
+LINKS = []
 
 
 def safe_extract(archive: zipfile.ZipFile, destination: Path) -> None:
@@ -99,11 +104,33 @@ def generated_name(source: Path) -> str:
     return f"{PREFIX}-{stem}.tex"
 
 
+def patch_internal_links() -> None:
+    global LINKS
+    if EDITION == 'basics':
+        LINKS = []  # Omitted chapters are intentionally plain-text references.
+    else:
+        sources, generated = {}, {}
+        for source in sorted((ROOT / 'docs').rglob('*.md')):
+            name = generated_name(source)
+            if (BUILD / name).exists():
+                slug = name[len(PREFIX) + 1:-4]
+                if slug in sources:
+                    raise ValueError(f'duplicate document slug: {slug}')
+                sources[slug] = source.read_text(encoding='utf-8')
+                generated[slug] = (BUILD / name).read_text(encoding='utf-8')
+        fixed, LINKS = repair_links(sources, generated)
+        for slug, text in fixed.items():
+            (BUILD / f'{PREFIX}-{slug}.tex').write_text(text, encoding='utf-8')
+    (BUILD / f'{PREFIX}-links.json').write_text(
+        json.dumps(LINKS, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
 def make_archive() -> None:
     temporary = ARCHIVE.with_suffix(".patched.zip")
     with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(BUILD.glob("*.tex")):
             archive.write(path, path.name)
+        archive.write(BUILD / f'{PREFIX}-links.json', f'{PREFIX}-links.json')
     temporary.replace(ARCHIVE)
 
 
@@ -201,7 +228,12 @@ def compile_pdf() -> None:
         problems = [marker for marker in forbidden if marker in log]
         if problems:
             raise RuntimeError(f"LaTeX log contains blocking diagnostics: {problems}")
+        resolved = resolve_destinations(BUILD, LINKS)
+        print('PDF link audit:', audit_pdf(main.with_suffix('.pdf'), resolved))
+        (BUILD / f'{PREFIX}-links.json').write_text(
+            json.dumps(resolved, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         shutil.copy2(main.with_suffix(".pdf"), PDF)
+        shutil.copy2(BUILD / f'{PREFIX}-links.json', PDF.with_suffix('.links.json'))
     finally:
         main.write_text(portable_main, encoding="utf-8")
         for link in font_links:
@@ -236,10 +268,11 @@ def main() -> None:
             patched += patch_listings(source, generated)
 
     patch_generated_structure()
+    patch_internal_links()
 
-    make_archive()
     if not args.tex_only:
         compile_pdf()
+    make_archive()
     print(f"Patched {patched} literal code blocks from MyST sources; tex_only={args.tex_only}.")
 
 

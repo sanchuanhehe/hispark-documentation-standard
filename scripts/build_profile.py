@@ -322,6 +322,7 @@ def build_tex(shadow: Path, myst: Path, compile_pdf: bool) -> None:
     publish_file(shadow / SHADOW_CORE_TEX, CORE_TEX)
     if compile_pdf:
         publish_file(shadow / SHADOW_PDF, CORE_PDF)
+        publish_file((shadow / SHADOW_PDF).with_suffix('.links.json'), CORE_PDF.with_suffix('.links.json'))
 
     annotated_after = {
         ANNOTATED_PDF: file_hash(ANNOTATED_PDF),

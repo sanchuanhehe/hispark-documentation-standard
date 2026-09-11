@@ -46,7 +46,8 @@ def main() -> None:
         (shadow / "docs" / "basics.md").write_text(reading_extract(), encoding="utf-8")
         shutil.copytree(ROOT / "latex", shadow / "latex")
         (shadow / "scripts").mkdir()
-        shutil.copy2(ROOT / "scripts" / "build_latex.py", shadow / "scripts")
+        for name in ('build_latex.py', 'pdf_links.py', 'profile_transform.py', 'validate_pdf_links.py'):
+            shutil.copy2(ROOT / 'scripts' / name, shadow / 'scripts')
         config = """version: 1
 project:
   title: HiSpark 文档规范
@@ -74,7 +75,7 @@ project:
         (shadow / "myst.yml").write_text(config, encoding="utf-8")
         run([myst, "build", "--tex", "--strict"], shadow)
         run([sys.executable, "scripts/build_latex.py", "--edition", "basics"], shadow)
-        for name in ("hispark-documentation-basics.pdf", "hispark-documentation-basics-tex.zip"):
+        for name in ("hispark-documentation-basics.pdf", "hispark-documentation-basics-tex.zip", "hispark-documentation-basics.links.json"):
             publish_file(shadow / "exports" / name, ROOT / "exports" / name)
 
 
