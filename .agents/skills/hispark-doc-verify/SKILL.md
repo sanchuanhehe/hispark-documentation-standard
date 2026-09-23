@@ -9,7 +9,16 @@ description: Execute or assess HiSpark SDK documentation builds, links, metadata
 
 ## 权威来源
 
-先查找采用项目声明的 HiSpark 文档规范。本 Skill 随规范仓库使用时，规范位于 Skill 目录向上三级的 `docs/`。重点读取第 4.4、6.1、8、9、10.3、10.4、11、12.3 和 14 章；规范正文优先于本 Skill 摘要。
+从[HiSpark 文档规范在线版](https://github.sanchuanhehe.com/hispark-documentation-standard/)按任务读取正文，不依赖 Skill 安装目录或本地规范副本。规范正文优先于本 Skill 摘要。
+
+先核对采用项目声明的 commit/tag、Profile 与[在线部署清单](https://github.sanchuanhehe.com/hispark-documentation-standard/build-manifest.json)。在线版随发布更新；版本或范围不一致时，以项目声明采用的版本核对，不静默升级。无法读取所需正文时明确报告缺口，不用 Skill 摘要代替条款。
+
+按验证对象读取：
+
+- 声明与元数据：[第 4.4 节](https://github.sanchuanhehe.com/hispark-documentation-standard/core-principles/#id-4-4)、[第 6.1 节](https://github.sanchuanhehe.com/hispark-documentation-standard/authoring/#id-6-1)；
+- 专项与测试模型：[第 8 章](https://github.sanchuanhehe.com/hispark-documentation-standard/specialized-content/)、[第 9 章](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/)；
+- 自动门禁与完成定义：[第 10.3 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-3)、[第 10.4 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#definition-of-done)；
+- 持续检查、维护与清单：[第 11 章](https://github.sanchuanhehe.com/hispark-documentation-standard/daily-ci/)、[第 12.3 节](https://github.sanchuanhehe.com/hispark-documentation-standard/governance-and-maintenance/#sample-maintenance-contract)、[第 14 章](https://github.sanchuanhehe.com/hispark-documentation-standard/conformance-checklist/)。
 
 需要测试矩阵、覆盖率或报告格式时，读取 [references/verification-matrix.md](references/verification-matrix.md)。
 
@@ -31,6 +40,6 @@ description: Execute or assess HiSpark SDK documentation builds, links, metadata
 
 结论按场景和实际证据给出，不由某一层通过推断其他层。无法运行硬件、缺少凭据或没有目标环境时，继续完成静态和构建验证，并把其余项标为 `blocked` 或 `not_run`，不得推断通过。验证等级包含 `smoke`；执行状态与等级、页面生命周期分开。
 
-总体门禁按正文第 10.5—10.7、11.1 节核对：历史基线不是豁免，零新增不是总体绿色；必需检查、报告身份/计数、证据和归档缺一项都不能判通过。报告及多变体模板见规范的验证与接入手册。
+总体门禁按正文[第 10.5—10.7 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-5)、[第 11.1 节](https://github.sanchuanhehe.com/hispark-documentation-standard/daily-ci/#id-11-1)核对：历史基线不是豁免，零新增不是总体绿色；必需检查、报告身份/计数、证据和归档缺一项都不能判通过。报告及多变体模板见规范的[验证与接入手册](https://github.sanchuanhehe.com/hispark-documentation-standard/verification-and-adoption/)。
 
 交付验证矩阵、实际命令、关键输出或产物位置、失败/阻塞原因以及 `verified` 尚缺的证据。除非用户明确要求，不修改 CI、不触发外部发布，也不改变页面状态。

@@ -9,7 +9,15 @@ description: Govern HiSpark SDK documentation lifecycles, ownership, upstream/do
 
 ## 权威来源
 
-先查找采用项目声明的 HiSpark 文档规范。本 Skill 随规范仓库使用时，规范位于 Skill 目录向上三级的 `docs/`。重点读取第 4.6、5.2、6.2、7、8、11、12、13 和 14 章；规范正文优先于本 Skill 摘要。
+从[HiSpark 文档规范在线版](https://github.sanchuanhehe.com/hispark-documentation-standard/)按任务读取正文，不依赖 Skill 安装目录或本地规范副本。规范正文优先于本 Skill 摘要。
+
+先核对采用项目声明的 commit/tag、Profile 与[在线部署清单](https://github.sanchuanhehe.com/hispark-documentation-standard/build-manifest.json)。在线版随发布更新；版本或范围不一致时，以项目声明采用的版本核对，不静默升级。无法读取所需正文时明确报告缺口，不用 Skill 摘要代替条款。
+
+按维护对象读取：
+
+- 上游、目录与生命周期：[第 4.6 节](https://github.sanchuanhehe.com/hispark-documentation-standard/core-principles/#id-4-6)、[第 5.2 节](https://github.sanchuanhehe.com/hispark-documentation-standard/information-architecture/#id-5-2)、[第 6.2 节](https://github.sanchuanhehe.com/hispark-documentation-standard/authoring/#id-6-2)、[第 7 章](https://github.sanchuanhehe.com/hispark-documentation-standard/upstream-downstream/)；
+- 专项与持续检查：[第 8 章](https://github.sanchuanhehe.com/hispark-documentation-standard/specialized-content/)、[第 11 章](https://github.sanchuanhehe.com/hispark-documentation-standard/daily-ci/)；
+- 治理、迁移与清单：[第 12 章](https://github.sanchuanhehe.com/hispark-documentation-standard/governance-and-maintenance/)、[第 13 章](https://github.sanchuanhehe.com/hispark-documentation-standard/migration/)、[第 14 章](https://github.sanchuanhehe.com/hispark-documentation-standard/conformance-checklist/)。
 
 进行仓库级审计、迁移或发布复核时，读取 [references/maintenance-model.md](references/maintenance-model.md)。
 

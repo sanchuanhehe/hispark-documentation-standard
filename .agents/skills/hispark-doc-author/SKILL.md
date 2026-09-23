@@ -9,15 +9,17 @@ description: Design, write, or refactor Simplified Chinese documentation for HiS
 
 ## 权威来源
 
-先查找采用项目声明的 HiSpark 文档规范。本 Skill 随规范仓库使用时，规范位于 Skill 目录向上三级的 `docs/`。规范正文优先于本 Skill 的工作摘要；不得把 Skill 中的摘要解释成新的规范性条款。
+从[HiSpark 文档规范在线版](https://github.sanchuanhehe.com/hispark-documentation-standard/)按任务读取正文，不依赖 Skill 安装目录或本地规范副本。规范正文优先于本 Skill 摘要。
+
+先核对采用项目声明的 commit/tag、Profile 与[在线部署清单](https://github.sanchuanhehe.com/hispark-documentation-standard/build-manifest.json)。在线版随发布更新；版本或范围不一致时，以项目声明采用的版本核对，不静默升级。无法读取所需正文时明确报告缺口，不用 Skill 摘要代替条款。
 
 根据任务读取相关章节：
 
-- 分类、目录与页面结构：第 5、6 章；
-- 上游与下游内容边界：第 7 章；
-- `get-started/`、Sample、API 或硬件内容：第 8 章；
-- 验证证据：第 9 章；
-- Review 与完成定义：第 10 章。
+- 分类、目录与页面结构：[第 5 章](https://github.sanchuanhehe.com/hispark-documentation-standard/information-architecture/)、[第 6 章](https://github.sanchuanhehe.com/hispark-documentation-standard/authoring/)；
+- 上游与下游内容边界：[第 7 章](https://github.sanchuanhehe.com/hispark-documentation-standard/upstream-downstream/)；
+- `get-started/`、Sample、API 或硬件内容：[第 8 章](https://github.sanchuanhehe.com/hispark-documentation-standard/specialized-content/)；
+- 验证证据：[第 9 章](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/)；
+- Review 与完成定义：[第 10 章](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/)。
 
 需要具体模板、检查点或交付格式时，读取 [references/authoring-playbook.md](references/authoring-playbook.md)。
 

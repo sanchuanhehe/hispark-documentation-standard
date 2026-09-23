@@ -51,7 +51,7 @@ npm run build:pdf:basics
 | `$hispark-doc-verify` | 验证文档构建、技术声明、Sample 覆盖、PR 门禁和 Daily CI |
 | `$hispark-doc-maintain` | 审计生命周期、上游同步、Owner、Sample 契约、发布复核和渐进迁移 |
 
-Skills 将本仓库 `docs/` 视为权威规范来源，入口文件保持精简，角色专属工作手册按需从各自 `references/` 加载。它们不预设具体芯片、产品、文档生成器或绝对路径；执行时应发现采用项目实际声明的工具和检查入口。
+Skills 通过[在线规范](https://github.sanchuanhehe.com/hispark-documentation-standard/)的章节与小节链接读取正文，不依赖安装位置或本地规范副本；执行前核对采用版本、Profile 与[部署清单](https://github.sanchuanhehe.com/hispark-documentation-standard/build-manifest.json)，不静默升级项目采用版本。入口文件保持精简，角色专属工作手册按需从各自 `references/` 加载。它们不预设具体芯片、产品、文档生成器或绝对路径；执行时应发现采用项目实际声明的工具和检查入口。
 
 支持仓库级 Skills 的 Agent 可以直接从 `.agents/skills/` 发现它们。也可以将需要的 Skill 目录复制到个人 Codex Skills 目录：
 

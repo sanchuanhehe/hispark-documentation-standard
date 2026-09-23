@@ -1,5 +1,7 @@
 # 验证与覆盖矩阵
 
+本手册是执行摘要；按入口 Skill 的版本核对要求读取在线[第 9 章：验证与测试](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/)。可填写模板见[验证与接入手册](https://github.sanchuanhehe.com/hispark-documentation-standard/verification-and-adoption/)。
+
 ## 1. 证据等级
 
 | 等级 | 能证明什么 | 不能据此声称什么 |
@@ -44,7 +46,7 @@
 
 无法执行的适用场景仍进入分母并标为 `blocked` 或 `not_run`。不要用 Sample 数、页面数、脚本数或单一“测试通过”代替分层覆盖率。
 
-Get Started 按正文第 9.4 节逐叶/变体记录 source/static、environment、configure、build、flash、serial、Smoke、HIL。平台展示等价不代表验证等价，服务器非 HIL Build 不证明桌面 GUI、USB 或实板行为。可执行文档检查覆盖事实源到渲染、Runner 和证据验证，获取源与检出源不同则补齐镜像等价证明。
+Get Started 按正文[第 9.4 节](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/#id-9-4-get-started)逐叶/变体记录 source/static、environment、configure、build、flash、serial、Smoke、HIL。平台展示等价不代表验证等价，服务器非 HIL Build 不证明桌面 GUI、USB 或实板行为。可执行文档检查覆盖事实源到渲染、Runner 和证据验证，获取源与检出源不同则补齐镜像等价证明。
 
 ## 4. 失败关闭条件
 
@@ -57,7 +59,7 @@ Get Started 按正文第 9.4 节逐叶/变体记录 source/static、environment�
 - 使用了与页面不匹配的产品、版本、Target、单板或上游版本；
 - 定时任务未执行却沿用上次绿色结果。
 
-按正文第 10.5—10.6、11.1 节，还需核对当前 known/new 发现、预期必需检查集合、取消/意外跳过、完整机器报告及其身份和计数、归档回执；增量信号不能代替总体门禁。正式限期例外不擦除发现或伪造通过。
+按正文[第 10.5—10.6 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-5)、[第 11.1 节](https://github.sanchuanhehe.com/hispark-documentation-standard/daily-ci/#id-11-1)，还需核对当前 known/new 发现、预期必需检查集合、取消/意外跳过、完整机器报告及其身份和计数、归档回执；增量信号不能代替总体门禁。正式限期例外不擦除发现或伪造通过。
 
 ## 5. 结果模板
 

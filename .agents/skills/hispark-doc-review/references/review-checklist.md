@@ -1,6 +1,6 @@
 # Review 检查表
 
-本检查表用于形成审查证据，不替代规范正文或项目批准流程。
+本检查表用于形成审查证据，不替代规范正文或项目批准流程。按入口 Skill 的版本核对要求读取在线[第 10 章：Review 与合入门禁](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/)和[第 14 章：按任务选择检查表](https://github.sanchuanhehe.com/hispark-documentation-standard/conformance-checklist/)。
 
 ## 1. 严重性
 

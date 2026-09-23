@@ -1,8 +1,10 @@
 # 维护与迁移模型
 
+本手册是执行摘要；按入口 Skill 的版本核对要求读取在线[第 12 章：治理与持续维护](https://github.sanchuanhehe.com/hispark-documentation-standard/governance-and-maintenance/)和[第 13 章：迁移方案](https://github.sanchuanhehe.com/hispark-documentation-standard/migration/)。
+
 ## 1. 基线清单
 
-先按正文第 12.4 节确认规范仓库/提交、profile、采用日期、Owner、例外、仓库本地 Skill 版本或哈希及同步复核机制。历史发现基线仅作 known/new/resolved 分类，不是豁免清单；判定整体质量使用正文第 10.5 节。
+先按正文[第 12.4 节](https://github.sanchuanhehe.com/hispark-documentation-standard/governance-and-maintenance/#id-12-4)确认规范仓库/提交、profile、采用日期、Owner、例外、仓库本地 Skill 版本或哈希及同步复核机制。历史发现基线仅作 known/new/resolved 分类，不是豁免清单；判定整体质量使用正文[第 10.5 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-5)。
 
 页面或内容单元至少记录：
 
@@ -79,7 +81,7 @@ Daily CI 与 PR 门禁复用锁定依赖和检查实现，至少覆盖：
 3. **建立证据**：锁定构建，接入链接/元数据/映射/覆盖门禁和 Daily CI。
 4. **推广复用**：先试点并记录例外，再推广稳定模型。
 
-迁移优先保留稳定 URL；删除、移动、重命名统一检查文件、导航、引用、旧 URL 的重定向/保留页/迁移映射。工具运行操作参考规范手册，不将具体项目参数写成通用要求。
+迁移优先保留稳定 URL；删除、移动、重命名统一检查文件、导航、引用、旧 URL 的重定向/保留页/迁移映射。工具运行操作参考[验证与接入手册](https://github.sanchuanhehe.com/hispark-documentation-standard/verification-and-adoption/)，不将具体项目参数写成通用要求。
 
 ## 7. 计划条目格式
 

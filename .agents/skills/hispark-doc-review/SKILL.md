@@ -9,7 +9,15 @@ description: Review HiSpark SDK documentation changes for information architectu
 
 ## 权威来源
 
-先查找采用项目声明的 HiSpark 文档规范。本 Skill 随规范仓库使用时，规范位于 Skill 目录向上三级的 `docs/`。重点读取第 2、4、5、7、8、9、10、12 和 14 章；规范正文优先于本 Skill 摘要。
+从[HiSpark 文档规范在线版](https://github.sanchuanhehe.com/hispark-documentation-standard/)按任务读取正文，不依赖 Skill 安装目录或本地规范副本。规范正文优先于本 Skill 摘要。
+
+先核对采用项目声明的 commit/tag、Profile 与[在线部署清单](https://github.sanchuanhehe.com/hispark-documentation-standard/build-manifest.json)。在线版随发布更新；版本或范围不一致时，以项目声明采用的版本核对，不静默升级。无法读取所需正文时明确报告缺口，不用 Skill 摘要代替条款。
+
+按审查范围读取：
+
+- 条款解释与内容组织：[第 2 章](https://github.sanchuanhehe.com/hispark-documentation-standard/normative-language/)、[第 4 章](https://github.sanchuanhehe.com/hispark-documentation-standard/core-principles/)、[第 5 章](https://github.sanchuanhehe.com/hispark-documentation-standard/information-architecture/)；
+- 上游、专项与证据：[第 7 章](https://github.sanchuanhehe.com/hispark-documentation-standard/upstream-downstream/)、[第 8 章](https://github.sanchuanhehe.com/hispark-documentation-standard/specialized-content/)、[第 9 章](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/)；
+- 评审、治理与清单：[第 10 章](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/)、[第 12 章](https://github.sanchuanhehe.com/hispark-documentation-standard/governance-and-maintenance/)、[第 14 章](https://github.sanchuanhehe.com/hispark-documentation-standard/conformance-checklist/)。
 
 执行完整审查或判定 Reviewer 时，读取 [references/review-checklist.md](references/review-checklist.md)。
 
@@ -26,7 +34,7 @@ description: Review HiSpark SDK documentation changes for information architectu
    - 自动门禁、Daily CI、例外和 Review 记录。
 4. 解释性内容存在时，分别检查相邻条款和解释块。执行删除测试：忽略解释块后，符合性结论必须不变；解释块不能增加要求、产品能力或责任边界。
 5. 对生成内容同时检查事实源、生成器或模板变化和最终可读渲染。不得因“工具生成”而跳过审查。
-6. 按正文第 10.2.4、10.5—10.7 节核对契约、渲染适配器、Runner 和测试是否受到等价 Reviewer 约束；历史债务仍存在或完整报告、身份、证据缺失时，不将增量绿色认定为总体合格。
+6. 按正文[第 10.2.4 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-2-4-review)、[第 10.5—10.7 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-5)核对契约、渲染适配器、Runner 和测试是否受到等价 Reviewer 约束；历史债务仍存在或完整报告、身份、证据缺失时，不将增量绿色认定为总体合格。
 
 ## 输出
 
