@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "commit": "synthetic-commit-not-product-evidence",
+  "run_id": "synthetic-run-1",
+  "scope": "reference-fixture-only",
+  "required_checks": ["source", "rendered"]
+}

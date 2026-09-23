@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "commit": "synthetic-commit-not-product-evidence",
+  "run_id": "synthetic-run-1",
+  "scope": "reference-fixture-only",
+  "complete": true,
+  "boundary": "Synthetic fixture; no SDK, upload service or hardware validated.",
+  "archive": {
+    "uploaded": true,
+    "uri": "artifact://synthetic/full-report",
+    "receipt": "synthetic-receipt-not-a-real-upload"
+  },
+  "checks": [
+    {"id": "source", "status": "passed", "exit_code": 0, "evidence": ["synthetic/source.log"]},
+    {"id": "rendered", "status": "passed", "exit_code": 0, "evidence": ["synthetic/rendered.log"]}
+  ],
+  "findings": [
+    {
+      "id": "doc-link:example-page:old-target",
+      "rule_id": "DOC-LINK",
+      "path": "docs/example.md",
+      "location": "line:12",
+      "message": "Synthetic known broken link: this report must not pass.",
+      "classification": "known"
+    }
+  ],
+  "summary": {
+    "counts": {"known": 1, "new": 0, "resolved": 0},
+    "by_rule": {"DOC-LINK": {"known": 1, "new": 0, "resolved": 0}},
+    "current": 1,
+    "baseline_new": 0
+  }
+}

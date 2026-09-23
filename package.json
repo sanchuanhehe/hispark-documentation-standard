@@ -24,11 +24,12 @@
     "build:all:profiles": "npm run build:all && npm run build:all:core && npm run build:pdf:basics",
     "test:profiles": "python3 -m unittest scripts/test_profile_transform.py",
     "test:pdf-links": "python3 -m unittest scripts/test_pdf_links.py",
+    "test:contracts": "python3 -m unittest scripts/test_contracts.py",
     "check:pdf-links": "python3 scripts/validate_pdf_links.py exports/hispark-documentation-standard.pdf",
     "check:source": "python3 scripts/validate_structure.py --profile annotated",
     "check:annotated": "python3 scripts/build_profile.py annotated check",
     "check:core": "python3 scripts/build_profile.py core check",
-    "check": "npm run check:source && npm run test:profiles && npm run test:pdf-links && npm run check:annotated && npm run check:core",
+    "check": "npm run check:source && npm run test:profiles && npm run test:pdf-links && npm run test:contracts && npm run check:annotated && npm run check:core",
     "check:links": "myst build --html --check-links --strict"
   },
   "devDependencies": {

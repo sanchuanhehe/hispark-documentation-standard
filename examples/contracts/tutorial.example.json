@@ -1,0 +1,16 @@
+{
+  "leaf_id": "synthetic-leaf",
+  "goal": "Synthetic first-success goal, not a product capability",
+  "criterion": "Synthetic observable outcome",
+  "owner": "example-role-not-an-assignment",
+  "approval": "synthetic-record-not-an-approval",
+  "user_test_evidence": "synthetic-record-not-user-testing",
+  "timing_boundary": "Includes required preparation; synthetic values only",
+  "includes_required_preparation": true,
+  "selections": [
+    {"dimension": "platform", "labels": ["Windows", "Linux"], "semantics": ["windows", "linux"], "sync_group": "platform"},
+    {"dimension": "platform", "labels": ["Windows", "Linux"], "semantics": ["windows", "linux"], "sync_group": "platform"}
+  ],
+  "budget": {"pages": 2, "steps": 4, "prerequisites": 2, "decisions": 1, "optional_branches": 0, "target_minutes": 20},
+  "measured": {"pages": 2, "steps": 4, "prerequisites": 2, "decisions": 1, "optional_branches": 0}
+}

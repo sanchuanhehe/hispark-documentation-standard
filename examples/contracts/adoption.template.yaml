@@ -1,0 +1,21 @@
+# Non-normative, unfilled template. Not an adoption or approval record.
+standard:
+  repository: <standard-repository>
+  ref: <commit-or-tag>
+  resolved_commit: <immutable-commit>
+  profile: <adopted-profile>
+adoption_date: <yyyy-mm-dd>
+owner: <accountable-role>
+scope: <adoption-scope>
+exceptions: [] # Link separately approved, time-limited exception records.
+local_skills:
+  applicability: <adopted-or-not-applicable-with-reason>
+  source: <skill-source>
+  revision_or_hash: <version-or-content-hash>
+  synced_at: <yyyy-mm-dd>
+  owner: <sync-owner>
+sync_review:
+  triggers: <release-change-or-periodic-trigger>
+  cadence: <review-cadence>
+  owner: <review-owner>
+  mechanism: <diff-review-checks-and-approval>
