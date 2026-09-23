@@ -35,14 +35,16 @@
 - `sample_id`、源码、文档、Owner、产品、版本、Target 和单板；
 - Build、Smoke、HIL、负向和版本覆盖状态；
 - 成功判据、证据位置、执行日期和环境；
-- `pass`、`fail`、`blocked`、`not-run` 或 `not-applicable`；
+- `passed`、`failed`、`blocked`、`not_run` 或 `not_applicable`；
 - 失败/阻塞原因、下一步与复核日期。
 
 覆盖率使用明确分母：
 
 `coverage = passed applicable cases / all applicable cases`
 
-无法执行的适用场景仍进入分母并标为 `blocked` 或 `not-run`。不要用 Sample 数、页面数、脚本数或单一“测试通过”代替分层覆盖率。
+无法执行的适用场景仍进入分母并标为 `blocked` 或 `not_run`。不要用 Sample 数、页面数、脚本数或单一“测试通过”代替分层覆盖率。
+
+Get Started 按正文第 9.4 节逐叶/变体记录 source/static、environment、configure、build、flash、serial、Smoke、HIL。平台展示等价不代表验证等价，服务器非 HIL Build 不证明桌面 GUI、USB 或实板行为。可执行文档检查覆盖事实源到渲染、Runner 和证据验证，获取源与检出源不同则补齐镜像等价证明。
 
 ## 4. 失败关闭条件
 
@@ -54,6 +56,8 @@
 - 日志截断、环境信息缺失或证据无法归档；
 - 使用了与页面不匹配的产品、版本、Target、单板或上游版本；
 - 定时任务未执行却沿用上次绿色结果。
+
+按正文第 10.5—10.6、11.1 节，还需核对当前 known/new 发现、预期必需检查集合、取消/意外跳过、完整机器报告及其身份和计数、归档回执；增量信号不能代替总体门禁。正式限期例外不擦除发现或伪造通过。
 
 ## 5. 结果模板
 

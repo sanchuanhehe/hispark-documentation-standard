@@ -23,7 +23,7 @@ description: Design, write, or refactor Simplified Chinese documentation for HiS
 
 ## 工作方式
 
-1. 从用户任务、目标读者和完成判据确定页面的一个主要意图，并据此选择 `tutorial`、`how-to`、`reference` 或 `explanation`。历史目录名或“示例”“指南”等名称不能替代分类判断。
+1. 先区分纯导航和内容页：纯路由首页用 `navigation` 或等价角色，不继承所链接教程的验证状态；内容页从用户任务、目标读者和完成判据选择 `tutorial`、`how-to`、`reference` 或 `explanation`。历史目录名不能替代分类判断。
 2. 检查页面的产品、版本、硬件对象、Target、配置和验证范围。缺少证据时标为未知、待验证或不适用，不得借同系列产品或上游支持推断当前产品能力。
 3. 收集或保留必需元数据：`title`、`doc_type`、`product`、`applies_to`、`status`、`owner`、`verification_level`，以及适用时的 `last_verified`、`source_refs`、`upstream_refs`。适配项目的实际字段载体，不假定特定 Markdown 或构建工具。
 4. 写下游内容前先检查上游。通用说明链接到版本匹配的权威上游文档；下游只写集成入口、产品差异、限制、配置、验证结果和恢复边界。
