@@ -1,11 +1,13 @@
 from pathlib import Path
+import hashlib
+import json
 import re
 import sys
 import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_pages import audit_site, validate_base_url
+from build_pages import audit_site, publish_markdown, validate_base_url
 from build_profile import remove_exports_and_downloads, ROOT
 
 
@@ -69,6 +71,103 @@ class PagesTests(unittest.TestCase):
             (root / "linked.html").symlink_to(root / "index.html")
             with self.assertRaisesRegex(ValueError, "symbolic"):
                 audit_site(root, "/repo")
+
+
+class MarkdownPublicationTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        self.source = self.root / "source"
+        self.site = self.root / "site"
+        (self.source / "docs").mkdir(parents=True)
+        self.site.mkdir()
+        self.original = '---\ntitle: 前言\n---\n\n原文 [正文](part/chapter.md)\n'.encode()
+        (self.source / "docs/preface.md").write_bytes(self.original)
+        (self.site / "preface").mkdir()
+        (self.site / "preface/index.html").write_text("HiSpark /repo/")
+        self.article = {"kind": "Article", "slug": "preface", "location": "/docs/preface.md"}
+        self.metadata = self.site / "preface.json"
+        self.write_metadata()
+
+    def write_metadata(self):
+        self.metadata.write_text(json.dumps(self.article))
+
+    def test_raw_alias_and_original_path_are_byte_identical(self):
+        records = publish_markdown(self.source, self.site)
+        self.assertEqual(len(records), 1)
+        for path in records[0]["paths"]:
+            self.assertEqual((self.site / path).read_bytes(), self.original)
+        self.assertEqual(records[0]["sha256"], hashlib.sha256(self.original).hexdigest())
+
+    def test_index_and_nested_source_mapping(self):
+        self.article.update(slug="index")
+        self.write_metadata()
+        (self.site / "index.html").write_text("HiSpark /repo/")
+        (self.source / "docs/part").mkdir()
+        (self.source / "docs/part/chapter.md").write_text("# Chapter")
+        (self.site / "chapter").mkdir()
+        (self.site / "chapter/index.html").write_text("HiSpark /repo/")
+        (self.site / "chapter.json").write_text(json.dumps(
+            {"kind": "Article", "slug": "chapter", "location": "/docs/part/chapter.md"}))
+        records = publish_markdown(self.source, self.site)
+        self.assertEqual(len(records), 2)
+        self.assertEqual((self.site / "index.md").read_bytes(), self.original)
+        self.assertEqual((self.site / "docs/part/chapter.md").read_text(), "# Chapter")
+
+    def test_unrendered_source_blocks_publication(self):
+        (self.source / "docs/hidden.md").write_text("not rendered")
+        with self.assertRaisesRegex(ValueError, "coverage"):
+            publish_markdown(self.source, self.site)
+        self.assertFalse((self.site / "preface.md").exists())
+
+    def test_missing_html_or_source_blocks_publication(self):
+        for victim in (self.site / "preface/index.html", self.source / "docs/preface.md"):
+            original = victim.read_bytes()
+            victim.unlink()
+            with self.assertRaises(ValueError):
+                publish_markdown(self.source, self.site)
+            victim.write_bytes(original)
+
+    def test_traversal_and_non_docs_sources_are_rejected(self):
+        for location in ("/README.md", "/docs/../README.md", "/docs/./preface.md",
+                         "/docs//preface.md", "/docs/preface.txt"):
+            self.article["location"] = location
+            self.write_metadata()
+            with self.subTest(location=location), self.assertRaises(ValueError):
+                publish_markdown(self.source, self.site)
+
+    def test_unsafe_route_is_rejected(self):
+        self.article["slug"] = "../preface"
+        self.write_metadata()
+        with self.assertRaises(ValueError):
+            publish_markdown(self.source, self.site)
+
+    def test_existing_destination_is_not_overwritten(self):
+        (self.site / "preface.md").write_text("existing")
+        with self.assertRaisesRegex(ValueError, "collision"):
+            publish_markdown(self.source, self.site)
+        self.assertEqual((self.site / "preface.md").read_text(), "existing")
+
+    def test_duplicate_source_is_rejected(self):
+        (self.site / "duplicate.json").write_text(json.dumps(self.article))
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            publish_markdown(self.source, self.site)
+
+    def test_symlink_source_and_destination_are_rejected(self):
+        path = self.source / "docs/preface.md"
+        path.unlink()
+        outside = self.root / "outside.md"
+        outside.write_bytes(self.original)
+        path.symlink_to(outside)
+        with self.assertRaises(ValueError):
+            publish_markdown(self.source, self.site)
+        path.unlink()
+        path.write_bytes(self.original)
+        (self.site / "docs").symlink_to(self.source / "docs", target_is_directory=True)
+        with self.assertRaises(ValueError):
+            publish_markdown(self.source, self.site)
+        self.assertEqual(path.read_bytes(), self.original)
 
 
 if __name__ == "__main__":
