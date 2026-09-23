@@ -25,6 +25,7 @@ EXPECTED = [
     "docs/index.md",
     "docs/preface.md",
     "docs/handbook/write-a-page.md",
+    "docs/handbook/verification-and-adoption.md",
     "docs/part-1-foundations/01-scope-and-purpose.md",
     "docs/part-1-foundations/02-normative-language.md",
     "docs/part-1-foundations/03-terminology.md",

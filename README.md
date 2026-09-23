@@ -2,6 +2,19 @@
 
 本仓库使用 MyST Markdown 维护规范正文，并通过 LaTeX 输出正式 PDF。规范正文位于 `docs/`，导航与导出配置位于 `myst.yml`。
 
+## Get Started 试点反馈回灌
+
+条款映射、既有覆盖及修改前后说明见[回灌变更说明](changes/2026-09-23-get-started-feedback.md)。规范性正文保持工具与产品无关；[验证与接入手册](docs/handbook/verification-and-adoption.md)及 `examples/contracts/` 是非规范性模板和参考实现；真实产品参数留在采用项目。
+
+参考检查器支持报告聚合、逐叶预算和八阶段矩阵的部分确定性检查，不能授予整体符合性：
+
+```bash
+npm run test:contracts
+python3 scripts/validate_contracts.py tutorial examples/contracts/tutorial.example.json
+```
+
+`gate-report.example.json` 故意包含一项历史发现，搭配 `gate-plan.example.json` 执行 `gate` 子命令时预期失败。完整报告没有被展示上限截断，也没有用零新增债务冒充总体合格。归档回执真实性、用户测试、独立批准、SDK 和硬件行为需要采用项目自己的证据与检查。
+
 ## V1.2 结构整改试行
 
 日常阅读从[十项基础要求](docs/part-1-foundations/04-core-principles.md)开始。作者进入[写作入口与模板](docs/handbook/write-a-page.md)，再按页面内容查阅专项条款。Reviewer 使用[本次文档变更清单](docs/part-4-governance/14-conformance-checklist.md)，项目负责人使用同页的项目与发布清单。

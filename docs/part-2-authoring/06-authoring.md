@@ -17,11 +17,15 @@ title: '6. 页面创作规范'
 | `status` | MUST 为 `draft`、`reviewed`、`verified`、`deprecated` 之一 |
 | `owner` | MUST 指向可负责评审与过期处理的团队或角色 |
 | `last_verified` | `verified` 页面 MUST 使用 ISO 8601 日期 |
-| `verification_level` | MUST 为 `static`、`build`、`hil` 或 `not-applicable` |
+| `verification_level` | MUST 为 `static`、`build`、`smoke`、`hil` 或 `not-applicable`；表示声明的证据等级，不表示场景执行状态 |
 | `source_refs` | 代码、配置、接口或样例相关页面 MUST 给出可审查的源码路径 |
 | `upstream_refs` | 依赖上游说明时 MUST 给出上游项目、适用版本和稳定 URL；不依赖时 MAY 省略 |
 
 `status: verified` MUST NOT 在缺少相应证据时使用。硬件运行结果通常 REQUIRED `verification_level: hil`。
+
+场景执行状态 MUST 单独记录为 `passed`、`failed`、`blocked`、`not_run` 或 `not_applicable`，含义见[第 9.4 节](../part-3-quality/09-validation-and-testing.md)。`not_run`、`blocked`、`failed` MUST NOT 写入验证等级；单个场景通过 MUST NOT 推导其他场景或更高等级通过。已有等价状态拼写 MAY 通过显式映射兼容，MUST NOT 混淆未运行、阻塞和失败。
+
+纯导航页 MUST 具有标题、Owner、页面角色、适用范围和生命周期状态；项目 MAY 用 `doc_type: navigation` 或独立字段表达导航角色，MUST NOT 将其计作四类内容之一。导航页只声明自身导航、链接和范围的检查证据，MUST NOT 继承所链接教程的验证状态。出现实质教学或操作流程时，MUST 按相应内容类型拆分或重新分类。
 
 ## 6.2 版本与生命周期
 
@@ -83,7 +87,7 @@ API 参考 SHOULD 按[写作入口中的参考资料模板](../handbook/write-a-
 4. 内部文档引用 MUST 使用可点击的相对链接，MUST NOT 只写文件名或文档名。
 5. 链接目标、标题锚点和路径大小写 MUST 在 Linux 构建环境中验证。
 6. 外链 SHOULD 指向官方、稳定、版本匹配的来源。
-7. 页面移动或重命名 MUST 提供重定向或迁移映射。
+7. 页面删除、移动或重命名 MUST 联合检查文件、导航、站内引用和旧 URL；MUST 提供重定向、说明替代入口的保留页（tombstone）或可查的迁移映射，并验证旧入口的处置。仅删除源文件 MUST NOT 视为迁移完成。
 
 ## 6.5 写作与格式
 

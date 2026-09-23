@@ -32,6 +32,8 @@ title: '12. 治理与持续维护'
 - Owner；
 - 到期或复核日期。
 
+改变门禁处置的例外 MUST 具有唯一标识、明确到期日期、批准人、批准时间、适用发现/条款及提交或版本范围；MUST 完成[第 10.2 节](../part-3-quality/10-review-and-merge.md)适用的独立评审。仅有复核计划或 Owner 自行登记 MUST NOT 视为批准。例外 MUST NOT 擦除发现、伪造验证通过或免除报告完整性及失败传播要求；处理原则见[第 10.5 节](../part-3-quality/10-review-and-merge.md)。
+
 (sample-maintenance-contract)=
 ## 12.3 Sample 维护契约
 
@@ -70,3 +72,9 @@ title: '12. 治理与持续维护'
   last_verified: 2026-08-29
   evidence: artifacts/sample-tests/<sample-id>/
 ```
+
+## 12.4 规范采用清单
+
+采用项目 MUST 维护可审查的采用清单，至少记录规范仓库、采用的 commit/tag（标签 MUST 解析到提交）、profile、采用日期、Owner、适用范围、当前例外，以及同步触发条件和复核机制。profile MUST 明列适用条款范围，MUST NOT 被解释为降低该范围内的必需门禁。
+
+采用仓库本地 Skill 时，清单 MUST 记录来源及版本或内容哈希、同步日期和负责人；未采用 Skill 时 MUST 明示不适用。同步规范、Skill 或检查实现时 MUST Review 语义差异、记录不兼容变化并重新验证，MUST NOT 只复制文件或更新版本号。规范正文与 Skill 摘要冲突时 MUST 以声明采用的正文为准，并登记摘要修正任务。
