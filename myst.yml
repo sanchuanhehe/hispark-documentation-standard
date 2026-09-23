@@ -28,6 +28,10 @@ project:
     - exports/**
   toc:
     - file: docs/index.md
+    - file: docs/preface.md
+    - file: docs/part-1-foundations/01-scope-and-purpose.md
+    - file: docs/part-1-foundations/02-normative-language.md
+    - file: docs/part-1-foundations/03-terminology.md
     - file: docs/part-1-foundations/04-core-principles.md
     - file: docs/handbook/write-a-page.md
     - file: docs/handbook/verification-and-adoption.md
@@ -47,12 +51,8 @@ project:
         - file: docs/part-3-quality/11-daily-ci.md
         - file: docs/part-4-governance/12-governance-and-maintenance.md
         - file: docs/part-4-governance/13-migration.md
-    - title: 规范依据与阅读说明
+    - title: 参考资料与附录
       children:
-        - file: docs/preface.md
-        - file: docs/part-1-foundations/01-scope-and-purpose.md
-        - file: docs/part-1-foundations/02-normative-language.md
-        - file: docs/part-1-foundations/03-terminology.md
         - file: docs/backmatter/15-references.md
         - file: docs/backmatter/appendix-a-directory-mapping.md
   exports:

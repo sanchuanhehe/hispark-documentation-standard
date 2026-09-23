@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import sys
 import tempfile
 import unittest
@@ -9,6 +10,22 @@ from build_profile import remove_exports_and_downloads, ROOT
 
 
 class PagesTests(unittest.TestCase):
+    def test_preface_and_first_chapters_are_top_level_and_first(self):
+        config = (ROOT / "myst.yml").read_text(encoding="utf-8")
+        toc = config.split("  toc:\n")[1].split("  exports:\n")[0]
+        expected = [
+            "docs/index.md",
+            "docs/preface.md",
+            "docs/part-1-foundations/01-scope-and-purpose.md",
+            "docs/part-1-foundations/02-normative-language.md",
+            "docs/part-1-foundations/03-terminology.md",
+            "docs/part-1-foundations/04-core-principles.md",
+        ]
+        top_level = re.findall(r"^    - file: (.+)$", toc, re.MULTILINE)
+        self.assertEqual(top_level[:len(expected)], expected)
+        for page in expected:
+            self.assertEqual(toc.count(f"file: {page}\n"), 1)
+
     def test_repository_and_root_base_paths(self):
         for value in ("", "/hispark-documentation-standard", "/nested/repo"):
             self.assertEqual(validate_base_url(value), value)
