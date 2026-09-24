@@ -1,0 +1,120 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing stable tag to release (vMAJOR.MINOR.PATCH)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate and package release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+      BASE_URL: /${{ github.event.repository.name }}
+    outputs:
+      tag: ${{ steps.identity.outputs.tag }}
+      commit: ${{ steps.identity.outputs.commit }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.22.0'
+          cache: npm
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Verify release identity
+        id: identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/release.py check --tag "$RELEASE_TAG"
+          commit=$(git rev-parse HEAD)
+          test "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")" = "$commit"
+          git merge-base --is-ancestor "$commit" origin/main
+          echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          echo "DOCS_COMMIT=$commit" >> "$GITHUB_ENV"
+      - name: Install locked dependencies
+        run: |
+          npm ci
+          python -m pip install -r requirements-pdf.txt
+      - name: Validate all profiles and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _build/release-evidence
+          npm run check 2>&1 | tee _build/release-evidence/check.log
+          python -m unittest discover -s scripts -p 'test_*.py' 2>&1 | tee _build/release-evidence/tests.log
+      - name: Build both URL layouts and package verified artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/build_pages.py --channel release --output _build/release-root 2>&1 | tee _build/release-evidence/root.log
+          python scripts/build_pages.py --channel release --base-url "$BASE_URL/$RELEASE_TAG" --output _build/release-version 2>&1 | tee _build/release-evidence/version.log
+          python scripts/release.py bundle --tag "$RELEASE_TAG" --root _build/release-root --versioned _build/release-version --base-url "$BASE_URL" --output _build/release-assets
+          python scripts/release.py notes --tag "$RELEASE_TAG" --output _build/release-assets/RELEASE_NOTES.md
+      - name: Archive release evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            _build/release-evidence/
+            _build/release-root/build-manifest.json
+            _build/release-version/build-manifest.json
+          if-no-files-found: error
+      - name: Upload release assets
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-assets
+          path: _build/release-assets/
+          if-no-files-found: error
+
+  publish:
+    name: Publish release and request Pages deployment
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ needs.build.outputs.tag }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-assets
+          path: assets
+      - name: Verify assets and publish without overwriting a release
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd assets
+          sha256sum --check SHA256SUMS
+          test -s RELEASE_NOTES.md
+          gh release create "$RELEASE_TAG" --verify-tag --draft --title "$RELEASE_TAG" --notes-file RELEASE_NOTES.md
+          gh release upload "$RELEASE_TAG" "site-$RELEASE_TAG.tar.gz" "skills-$RELEASE_TAG.zip" SHA256SUMS
+          gh release edit "$RELEASE_TAG" --draft=false --latest
+      - name: Request versioned Pages deployment
+        run: gh workflow run pages.yml --ref main

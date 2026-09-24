@@ -7,9 +7,56 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import tempfile
+from urllib.parse import urlsplit
 
-from build_profile import ROOT, prepare_shadow, publish_directory, resolve_myst, run
+from build_profile import ROOT, prepare_shadow, publish_directory, resolve_myst
+from release import check as check_version
+
+
+def checked_build(command: list, cwd: Path) -> None:
+    """The CLI can report link errors with exit 0; do not treat that as green."""
+    print("+ " + " ".join(map(str, command)), flush=True)
+    errors = []
+    with subprocess.Popen(list(map(str, command)), cwd=cwd, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, text=True) as process:
+        for line in process.stdout:
+            print(line, end="", flush=True)
+            if "⛔" in line:
+                errors.append(line.strip())
+        code = process.wait()
+    if code or errors:
+        raise RuntimeError(f"document build failed (exit={code}, diagnostics={errors})")
+
+
+def version_identity(base_url: str, version: str, channel: str, commit: str) -> dict:
+    prefix = base_url
+    if channel == "dev" and prefix.endswith("/dev"):
+        prefix = prefix[:-4]
+    elif channel == "release" and prefix.endswith(f"/v{version}"):
+        prefix = prefix[:-(len(version) + 2)]
+    return {"version": version, "channel": channel, "commit": commit, "root": prefix}
+
+
+def add_version_config(config: Path, info: dict) -> None:
+    """Use theme-native parts so server HTML and client hydration agree."""
+    label = (f"正式版本 v{info['version']}" if info["channel"] == "release" else
+             f"开发快照 · 基线 v{info['version']} · {info['commit'][:8]}（非正式发布）")
+    origin = os.environ.get("SITE_ORIGIN", "https://github.sanchuanhehe.com")
+    parsed = urlsplit(origin)
+    if parsed.scheme not in {"https", "http"} or not parsed.netloc or parsed.path or parsed.query or parsed.fragment:
+        raise ValueError("SITE_ORIGIN must be an HTTP(S) origin without a path")
+    prefix = origin + info["root"]
+    # Cross-version deployment routes do not exist in a single-version build.
+    # They are validated against the composed artifact by assemble_pages/tests.
+    links = " · ".join(f'<a href="{prefix}{route}">{title}</a>' for route, title in (
+        ("/", "最新稳定版"), ("/dev/", "开发版"), ("/versions/", "历史版本")))
+    text = config.read_text(encoding="utf-8")
+    if "  parts:" in text.split("site:\n", 1)[1]:
+        raise ValueError("site parts already configured; do not overwrite")
+    text = text.replace("    logo_text: HiSpark 文档规范\n", f"    logo_text: HiSpark 文档规范 · {'v' + info['version'] if info['channel'] == 'release' else '开发版'}\n")
+    config.write_text(text + f"\n  parts:\n    navbar_end: '{label}'\n    footer: |\n      {label}\n\n      {links}\n", encoding="utf-8")
 
 
 def validate_base_url(value: str) -> str:
@@ -126,24 +173,41 @@ def publish_retired_handbook(directory: Path, base_url: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default=os.environ.get("BASE_URL", ""))
+    parser.add_argument("--channel", choices=("dev", "release"), default="dev")
+    parser.add_argument("--output", type=Path, default=ROOT / "_build/pages")
     args = parser.parse_args()
     base_url = validate_base_url(args.base_url)
     os.environ["BASE_URL"] = base_url
-    output = ROOT / "_build/pages"
+    output = args.output.resolve()
+    if not output.is_relative_to(ROOT / "_build") or output == ROOT / "_build":
+        parser.error("output must be a subdirectory of _build")
+    version, released, _ = check_version()
+    commit = os.environ.get("DOCS_COMMIT", os.environ.get("GITHUB_SHA", "local-uncommitted"))
+    if args.channel == "release" and not re.fullmatch(r"[0-9a-f]{40}", commit):
+        parser.error("release builds require GITHUB_SHA")
     with tempfile.TemporaryDirectory(prefix="hispark-pages-") as temporary:
         shadow = Path(temporary)
         # Only export/download controls are removed. Canonical content and both
         # profile quality checks stay unchanged; no stale local PDFs are copied.
         prepare_shadow(shadow, "annotated", include_exports=False)
-        run([resolve_myst(), "build", "--html", "--strict", "--check-links"], shadow)
+        # Canonical content links are checked before adding cross-version UI.
+        # UI routes are validated against the final composite site, not docs/.
+        checked_build([resolve_myst(), "build", "--site", "--strict", "--check-links"], shadow)
+        info = version_identity(base_url, version, args.channel, commit)
+        add_version_config(shadow / "myst.yml", info)
+        checked_build([resolve_myst(), "build", "--html", "--strict"], shadow)
         html = shadow / "_build/html"
         (html / ".nojekyll").touch()
         markdown_sources = publish_markdown(shadow, html)
         publish_retired_handbook(html, base_url)
+        (html / "version-info.json").write_text(json.dumps(info), encoding="utf-8")
         files = audit_site(html, base_url)
         manifest = {
             "schema_version": 1,
-            "commit": os.environ.get("GITHUB_SHA", "local-uncommitted"),
+            "commit": commit,
+            "version": version,
+            "release_date": released,
+            "channel": args.channel,
             "run_id": os.environ.get("GITHUB_RUN_ID", "local"),
             "base_url": base_url,
             "profile": "annotated",
