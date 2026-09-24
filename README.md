@@ -40,7 +40,7 @@ cp -R .agents/skills/hispark-doc-author "${CODEX_HOME:-$HOME/.codex}/skills/"
 发布版本以 [VERSION](VERSION) 为准，变更记录见 [Changelog](CHANGELOG.md)，发布操作见[发布手册](.github/RELEASING.md)。构建 Profile 与发布版本是两个维度。
 
 - [最新稳定版](https://github.sanchuanhehe.com/hispark-documentation-standard/)：最近正式发布的规范。
-- [固定版本 v0.1.4](https://github.sanchuanhehe.com/hispark-documentation-standard/v0.1.4/)：可用于固定版本引用。
+- [固定版本 v0.1.5](https://github.sanchuanhehe.com/hispark-documentation-standard/v0.1.5/)：可用于固定版本引用。
 - [开发版](https://github.sanchuanhehe.com/hispark-documentation-standard/dev/)：main 快照，不作为正式发布。
 
 - **Annotated（默认完整版本）**：保留第 2.2 节及全部非规范性解释块。
@@ -156,4 +156,4 @@ BASE_URL=/hispark-documentation-standard python3 scripts/build_pages.py
 └── Makefile              # 常用构建入口
 ```
 
-正文的唯一事实源是 `docs/`。MUST NOT 直接修改构建生成的 HTML、PDF、`.tex` 文件或 Core 影子工程来替代源文档变更。需要调整 Core 范围时，应修改 `profiles/core.json` 并让全部 Profile 检查通过。
+正文的唯一事实源是 `docs/`。不得（MUST NOT）直接修改构建生成的 HTML、PDF、`.tex` 文件或 Core 影子工程来替代源文档变更。需要调整 Core 范围时，应修改 `profiles/core.json` 并让全部 Profile 检查通过。
