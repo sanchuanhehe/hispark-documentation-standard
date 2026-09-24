@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-09-24
+
+### Changed
+
+- Present normative keywords as Chinese terms followed by BCP 14 keywords, such as 必须（MUST） and 不得（MUST NOT）, throughout the standard and reading extracts without changing requirement strength.
+- Clarify the keyword table and reading guidance while preserving the original BCP 14 declaration and the Annotated/Core content boundaries.
+
+### Added
+
+- Check Chinese/English keyword pairs during source validation and add regression tests for negative keywords, literal code, and both document profiles.
+
 ## [0.1.4] - 2026-09-24
 
 这是本仓库首个带 Git 标签的发布基线，包含此前已维护的规范及配套工具。不追溯虚构 v0.1.0–v0.1.3 发布；此前页面中的 V1.2 和构建包中的 1.1.0 是未统一的内部标识，不代表已有正式 Release。
@@ -32,5 +43,6 @@
 - 修复 PDF 正文内链目标，并通过自动检查验证实际跳转。
 - 补齐文档导航、原文发布覆盖和页面删除兼容入口的回归测试。
 
-[Unreleased]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/sanchuanhehe/hispark-documentation-standard/releases/tag/v0.1.4

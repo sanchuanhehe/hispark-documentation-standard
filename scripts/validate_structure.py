@@ -18,7 +18,61 @@ from profile_transform import (  # noqa: E402
     load_manifest,
     read_documents,
     strip_fenced_code_blocks,
+    _next_fence_state,
 )
+
+
+KEYWORD_ZH = {
+    "MUST": "必须", "MUST NOT": "不得", "REQUIRED": "必需",
+    "SHALL": "必须", "SHALL NOT": "不得", "SHOULD": "应当",
+    "SHOULD NOT": "不应", "RECOMMENDED": "推荐",
+    "NOT RECOMMENDED": "不推荐", "MAY": "可以", "OPTIONAL": "可选",
+}
+KEYWORDS = re.compile(
+    r"(?<![A-Za-z0-9_])(?:"
+    + "|".join(re.escape(word) for word in sorted(KEYWORD_ZH, key=len, reverse=True))
+    + r")(?![A-Za-z0-9_])"
+)
+BCP14_DECLARATION = (
+    'The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", '
+    '"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and '
+    '"OPTIONAL" in this document are to be interpreted as described in '
+    '[BCP 14](https://www.rfc-editor.org/info/bcp14) '
+    '[RFC2119](https://www.rfc-editor.org/info/rfc2119/) '
+    '[RFC8174](https://www.rfc-editor.org/info/rfc8174/) when, and only when, '
+    'they appear in all capitals, as shown here.'
+)
+
+
+def keyword_style_errors(text: str, source: str) -> list[str]:
+    """Check editorial presentation, not whether a clause is substantively correct.
+
+    Code is literal data; the exact BCP 14 declaration is quoted unchanged.
+    Longest-first matching preserves negative terms as indivisible keywords.
+    """
+    errors = []
+    state = None
+    for number, line in enumerate(text.splitlines(), 1):
+        before = state
+        state = _next_fence_state(line, state)
+        if before is not None or state is not None or line == BCP14_DECLARATION:
+            continue
+        # Mask literal inline code, preserving positions for diagnostic locations.
+        prose = re.sub(r"(`+)(?!`).*?(?<!`)\1(?!`)",
+                       lambda match: " " * len(match.group()), line)
+        for match in KEYWORDS.finditer(prose):
+            word = match.group()
+            prefix = KEYWORD_ZH[word] + "（"
+            if (not prose[:match.start()].endswith(prefix)
+                    or prose[match.end():match.end() + 1] != "）"
+                    or re.match(r"）\s*NOT\b", prose[match.end():])):
+                errors.append(
+                    f"{source}:{number}:{match.start() + 1}: "
+                    f"expected {prefix}{word}）"
+                )
+    if state is not None:
+        errors.append(f"{source}: unclosed fenced code block")
+    return errors
 
 
 EXPECTED = [
@@ -58,6 +112,9 @@ def validate(profile: str) -> None:
     labels = Counter()
     for relative in EXPECTED:
         text = documents[relative]
+        style_errors = keyword_style_errors(text, relative)
+        if style_errors:
+            fail("\n".join(style_errors))
         if not text.startswith("---\n") or "\n---\n" not in text[4:]:
             fail(f"missing frontmatter: {relative}")
         if not re.search(r"(?m)^title:\s*.+$", text.split("---", 2)[1]):
