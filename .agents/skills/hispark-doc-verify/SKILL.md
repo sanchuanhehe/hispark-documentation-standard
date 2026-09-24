@@ -40,6 +40,6 @@ description: Execute or assess HiSpark SDK documentation builds, links, metadata
 
 结论按场景和实际证据给出，不由某一层通过推断其他层。无法运行硬件、缺少凭据或没有目标环境时，继续完成静态和构建验证，并把其余项标为 `blocked` 或 `not_run`，不得推断通过。验证等级包含 `smoke`；执行状态与等级、页面生命周期分开。
 
-总体门禁按正文[第 10.5—10.7 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-5)、[第 11.1 节](https://github.sanchuanhehe.com/hispark-documentation-standard/daily-ci/#id-11-1)核对：历史基线不是豁免，零新增不是总体绿色；必需检查、报告身份/计数、证据和归档缺一项都不能判通过。报告及多变体模板见规范的[验证与接入手册](https://github.sanchuanhehe.com/hispark-documentation-standard/verification-and-adoption/)。
+总体门禁按正文[第 10.5—10.7 节](https://github.sanchuanhehe.com/hispark-documentation-standard/review-and-merge/#id-10-5)、[第 11.1 节](https://github.sanchuanhehe.com/hispark-documentation-standard/daily-ci/#id-11-1)核对：历史基线不是豁免，零新增不是总体绿色；必需检查、报告身份/计数、证据和归档缺一项都不能判通过。多变体验证要求见[第 9.4 节](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/#id-9-4)。
 
 交付验证矩阵、实际命令、关键输出或产物位置、失败/阻塞原因以及 `verified` 尚缺的证据。除非用户明确要求，不修改 CI、不触发外部发布，也不改变页面状态。

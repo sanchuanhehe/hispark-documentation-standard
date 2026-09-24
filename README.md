@@ -12,7 +12,7 @@
 | 掌握共同要求 | [十项基础要求](docs/part-1-foundations/04-core-principles.md) |
 | 编写文档 | [写作入口与模板](docs/handbook/write-a-page.md) |
 | 审查变更或准备发布 | [Review 要求](docs/part-3-quality/10-review-and-merge.md)、[变更与项目检查表](docs/part-4-governance/14-conformance-checklist.md) |
-| 接入验证与治理 | [验证与接入手册](docs/handbook/verification-and-adoption.md)、[迁移方案](docs/part-4-governance/13-migration.md) |
+| 接入验证与治理 | [验证与测试](docs/part-3-quality/09-validation-and-testing.md)、[迁移方案](docs/part-4-governance/13-migration.md) |
 
 每篇在线文档同时提供 Markdown 原文，例如[前言原文](https://github.sanchuanhehe.com/hispark-documentation-standard/preface.md)。需要保留相对文件链接的路径上下文时，使用[源目录地址](https://github.sanchuanhehe.com/hispark-documentation-standard/docs/preface.md)。
 
@@ -111,7 +111,7 @@ PDF 构建会审计实际跳转目标和正文点击区域，映射保存于 `ex
 
 ## 检查与参考实现
 
-[验证与接入手册](docs/handbook/verification-and-adoption.md)及 [examples/contracts/](examples/contracts/) 提供非规范性模板和参考实现，不要求采用项目使用同一工具。真实产品参数与证据留在采用项目。
+[examples/contracts/](examples/contracts/) 提供非规范性模板和参考数据，不要求采用项目使用同一工具。真实产品参数与证据留在采用项目。
 
 在仓库根目录、已激活的虚拟环境中运行全部单元测试，或检查合成的逐叶预算示例：
 

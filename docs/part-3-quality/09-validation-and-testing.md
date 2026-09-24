@@ -132,4 +132,4 @@ Windows Server 上的非 HIL Build 只证明该 OS/Runner 环境内执行的构�
 
 检查链 MUST 覆盖事实源、生成器、源占位符、构建 Hook、渲染结果、Runner 和证据验证。未使用其中某层时 MUST 明确记录不适用及替代链路。检查 MUST 发现缺失或重复占位符、未执行的构建集成、陈旧或不等价的渲染结果、Runner 参数漂移以及产物/日志与声明不一致；成功判据 MUST 有独立的需求或正式资料依据，MUST NOT 仅通过文档与测试共享同一错误来证明正确。
 
-工作流 SHOULD 只编排共享检查入口，PR、Daily 与本地复用要求见[第 11 章](11-daily-ci.md)。兼容包装 MUST 登记调用方、Owner、移除条件和截止日期，MUST NOT 无期限保留另一套实现。参考实现与可填写模板见[验证与接入手册](../handbook/verification-and-adoption.md)，其中的工具选择不构成符合性要求。
+工作流 SHOULD 只编排共享检查入口，PR、Daily 与本地复用要求见[第 11 章](11-daily-ci.md)。兼容包装 MUST 登记调用方、Owner、移除条件和截止日期，MUST NOT 无期限保留另一套实现。

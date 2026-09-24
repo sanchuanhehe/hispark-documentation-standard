@@ -34,7 +34,6 @@ project:
     - file: docs/part-1-foundations/03-terminology.md
     - file: docs/part-1-foundations/04-core-principles.md
     - file: docs/handbook/write-a-page.md
-    - file: docs/handbook/verification-and-adoption.md
     - title: 写作与专项：按内容查阅
       children:
         - file: docs/part-2-authoring/05-information-architecture.md
@@ -98,8 +97,6 @@ project:
         - file: docs/backmatter/appendix-a-directory-mapping.md
           level: 0
         - file: docs/handbook/write-a-page.md
-          level: 0
-        - file: docs/handbook/verification-and-adoption.md
           level: 0
     - id: standard-tex
       format: tex

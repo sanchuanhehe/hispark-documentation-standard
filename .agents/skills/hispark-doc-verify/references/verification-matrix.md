@@ -1,6 +1,6 @@
 # 验证与覆盖矩阵
 
-本手册是执行摘要；按入口 Skill 的版本核对要求读取在线[第 9 章：验证与测试](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/)。可填写模板见[验证与接入手册](https://github.sanchuanhehe.com/hispark-documentation-standard/verification-and-adoption/)。
+本手册是执行摘要；按入口 Skill 的版本核对要求读取在线[第 9 章：验证与测试](https://github.sanchuanhehe.com/hispark-documentation-standard/validation-and-testing/)，其中第 9.4 节定义多变体矩阵与证据要求。
 
 ## 1. 证据等级
 

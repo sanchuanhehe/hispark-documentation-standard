@@ -91,6 +91,38 @@ def publish_markdown(source_root: Path, directory: Path) -> list[dict]:
     return records
 
 
+def publish_retired_handbook(directory: Path, base_url: str) -> None:
+    """Keep old HTML/raw URLs useful without republishing the removed handbook."""
+    base_url = validate_base_url(base_url)
+    destinations = [
+        ("validation-and-testing", "验证与测试"),
+        ("governance-and-maintenance", "治理与持续维护"),
+        ("migration", "迁移方案"),
+    ]
+    for slug, _ in destinations:
+        if not (directory / slug / "index.html").is_file():
+            raise ValueError(f"missing retired-page replacement: {slug}")
+    paths = ["verification-and-adoption/index.html", "verification-and-adoption.md",
+             "docs/handbook/verification-and-adoption.md"]
+    for path in paths:
+        target = directory / path
+        if (target.exists() or target.is_symlink()
+                or any((directory / p).is_symlink() for p in Path(path).parents)):
+            raise ValueError(f"retired-page destination collision: {path}")
+    message = "此手册已删除。相关规范要求请查阅以下章节；原模板与说明不再发布。"
+    links = "".join(f'<li><a href="{base_url}/{slug}/">{title}</a></li>'
+                    for slug, title in destinations)
+    html = ('<!doctype html><html lang="zh-CN"><meta charset="utf-8">'
+            '<meta name="robots" content="noindex"><title>页面已删除</title>'
+            f'<body><h1>页面已删除</h1><p>{message}</p><ul>{links}</ul></body></html>')
+    markdown = "# 页面已删除\n\n" + message + "\n\n" + "".join(
+        f"- [{title}]({base_url}/{slug}/)\n" for slug, title in destinations)
+    for path in paths:
+        target = directory / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(html if path.endswith(".html") else markdown, encoding="utf-8")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default=os.environ.get("BASE_URL", ""))
@@ -107,6 +139,7 @@ def main() -> None:
         html = shadow / "_build/html"
         (html / ".nojekyll").touch()
         markdown_sources = publish_markdown(shadow, html)
+        publish_retired_handbook(html, base_url)
         files = audit_site(html, base_url)
         manifest = {
             "schema_version": 1,

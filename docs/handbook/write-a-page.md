@@ -42,7 +42,7 @@ short_title: 写一篇文档
 
 第一次成功前不放可选方案、完整参数表或长篇架构背景。它们在成功后的链接中提供。
 
-多平台入口先区分入口决策、叶子教程和平台展示变体；纯导航页不套教程模板。逐叶预算、八阶段验证与规范采用记录可使用[验证与接入手册](verification-and-adoption.md)中的非规范性模板。
+多平台入口先区分入口决策、叶子教程和平台展示变体；纯导航页不套教程模板。逐叶预算见[第 8.1 节](../part-2-authoring/08-specialized-content.md)，八阶段验证见[第 9.4 节](../part-3-quality/09-validation-and-testing.md)，规范采用记录见[第 12.4 节](../part-4-governance/12-governance-and-maintenance.md)。
 
 ## 实践指南模板
 

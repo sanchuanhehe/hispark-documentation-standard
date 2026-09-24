@@ -81,7 +81,7 @@ Daily CI 与 PR 门禁复用锁定依赖和检查实现，至少覆盖：
 3. **建立证据**：锁定构建，接入链接/元数据/映射/覆盖门禁和 Daily CI。
 4. **推广复用**：先试点并记录例外，再推广稳定模型。
 
-迁移优先保留稳定 URL；删除、移动、重命名统一检查文件、导航、引用、旧 URL 的重定向/保留页/迁移映射。工具运行操作参考[验证与接入手册](https://github.sanchuanhehe.com/hispark-documentation-standard/verification-and-adoption/)，不将具体项目参数写成通用要求。
+迁移优先保留稳定 URL；删除、移动、重命名统一检查文件、导航、引用、旧 URL 的重定向/保留页/迁移映射。工程接入与迁移记录按[第 13.6 节](https://github.sanchuanhehe.com/hispark-documentation-standard/migration/#id-13-6)核对，不将具体项目参数写成通用要求。
 
 ## 7. 计划条目格式
 

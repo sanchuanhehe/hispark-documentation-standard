@@ -7,11 +7,18 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_pages import audit_site, publish_markdown, validate_base_url
+from build_pages import audit_site, publish_markdown, publish_retired_handbook, validate_base_url
 from build_profile import remove_exports_and_downloads, ROOT
 
 
 class PagesTests(unittest.TestCase):
+    def test_removed_handbook_is_not_a_document_or_navigation_entry(self):
+        path = "docs/handbook/verification-and-adoption.md"
+        self.assertFalse((ROOT / path).exists())
+        self.assertNotIn(path, (ROOT / "myst.yml").read_text())
+        for source in (ROOT / "docs").rglob("*.md"):
+            self.assertNotIn("verification-and-adoption", source.read_text())
+
     def test_preface_and_first_chapters_are_top_level_and_first(self):
         config = (ROOT / "myst.yml").read_text(encoding="utf-8")
         toc = config.split("  toc:\n")[1].split("  exports:\n")[0]
@@ -71,6 +78,47 @@ class PagesTests(unittest.TestCase):
             (root / "linked.html").symlink_to(root / "index.html")
             with self.assertRaisesRegex(ValueError, "symbolic"):
                 audit_site(root, "/repo")
+
+
+class RetiredHandbookTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        for slug in ("validation-and-testing", "governance-and-maintenance", "migration"):
+            (self.root / slug).mkdir()
+            (self.root / slug / "index.html").write_text("replacement")
+
+    def test_old_html_and_raw_urls_have_valid_replacements(self):
+        publish_retired_handbook(self.root, "/repo")
+        (self.root / "index.html").write_text("HiSpark /repo/")
+        files = audit_site(self.root, "/repo")
+        paths = ("verification-and-adoption/index.html", "verification-and-adoption.md",
+                 "docs/handbook/verification-and-adoption.md")
+        for path in paths:
+            text = (self.root / path).read_text()
+            self.assertIn("页面已删除", text)
+            self.assertIn("/repo/validation-and-testing/", text)
+            self.assertNotIn("scenario_id", text)
+            self.assertIn(path, files)
+
+    def test_missing_replacement_fails_before_writing(self):
+        (self.root / "migration/index.html").unlink()
+        with self.assertRaisesRegex(ValueError, "replacement"):
+            publish_retired_handbook(self.root, "")
+        self.assertFalse((self.root / "verification-and-adoption.md").exists())
+
+    def test_collision_or_symlink_fails_before_writing(self):
+        path = self.root / "verification-and-adoption.md"
+        path.write_text("existing")
+        with self.assertRaisesRegex(ValueError, "collision"):
+            publish_retired_handbook(self.root, "")
+        self.assertEqual(path.read_text(), "existing")
+        path.unlink()
+        (self.root / "docs").symlink_to(self.root / "migration", target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "collision"):
+            publish_retired_handbook(self.root, "")
+        self.assertFalse(path.exists())
 
 
 class MarkdownPublicationTests(unittest.TestCase):

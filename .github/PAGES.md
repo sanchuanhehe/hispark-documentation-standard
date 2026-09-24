@@ -21,3 +21,10 @@ BASE_URL=/hispark-documentation-standard python3 scripts/build_pages.py
 ```
 
 站点验证不等于规范的人工批准，也不证明采用项目的 SDK 或硬件行为。外链检查依赖外部服务，失败时查归档日志后修复或重跑，不跳过检查。
+
+## 已删除页面的兼容入口
+
+`verification-and-adoption/`、`verification-and-adoption.md` 和
+`docs/handbook/verification-and-adoption.md` 只发布删除提示，链接到验证与测试、治理与持续维护和迁移方案。原手册已从正文、导航和 PDF/TeX 导出清单移除；历史内容可从 Git 恢复。
+
+保留页由发布脚本生成，不属于规范正文，不进入搜索或 `markdown_sources` 原文清单；文件摘要仍纳入 `build-manifest.json`。构建时检查替代页面存在，测试覆盖三个旧地址、路径前缀和目的文件冲突。
