@@ -1,11 +1,11 @@
 # GitHub Pages 发布
 
-工作流 `pages.yml` 在 `main` 推送及手动触发时验证并发布；PR 只验证，不部署。
+工作流 `pages.yml` 在 `main` 推送及手动触发时验证并部署；PR 只验证，不部署。main 内容发布到 `/dev/`；根地址和固定版本地址从已发布 Release 的已验证附件恢复，详见[发布与版本维护](RELEASING.md)。
 
 - 使用锁定的 MyST 依赖，运行现有 `npm run check` 和全部 Python 测试。
-- `scripts/build_pages.py` 在临时目录生成 Annotated HTML，严格检查构建和外链。
+- `scripts/build_pages.py` 在临时目录生成 Annotated HTML，严格检查构建和外链，并添加与正文分离的版本提示；`scripts/assemble_pages.py` 校验历史 Release 后组合完整站点。
 - `BASE_URL` 使用仓库名，避免项目站点 CSS、脚本和页面链接丢失前缀。
-- `_build/pages` 是实际上传的产物；`build-manifest.json` 记录提交、运行身份和文件摘要。
+- `_build/pages` 是实际上传的产物；各版本的 `build-manifest.json` 记录提交、运行身份和文件摘要，`deployment-manifest.json` 记录组合部署的全部文件，`versions.json` 列出可用版本。
 - 每个已渲染页面同时发布原始 Markdown，例如 `preface.md`、`authoring.md`；另保留 `docs/preface.md`、`docs/part-2-authoring/06-authoring.md` 等源目录地址，以保留原文相对文件链接的路径上下文。短地址不改写原文中的相对链接；需要沿原文链接阅读时使用源目录地址。源格式的跨页锚点由文档生成器解析，纯文本端点不提供 HTML 的锚点跳转行为。
 - 原文逐字节复制自同次构建的源快照，含 Front Matter 与指令，不是从 HTML 反向转换。`build-manifest.json` 的 `markdown_sources` 给出源路径、页面标识、两个发布地址及 SHA-256，文件摘要涵盖所有原文；缺页、重复映射、路径越界或目的文件冲突时构建失败。不发布未渲染页面或整个仓库。
 - 构建/检查/证据归档失败则不部署。日志与清单归档为 Actions artifact。

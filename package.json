@@ -1,6 +1,6 @@
 {
   "name": "hispark-documentation-standard",
-  "version": "1.1.0",
+  "version": "0.1.4",
   "private": true,
   "description": "HiSpark documentation standard authored with MyST and exported through LaTeX.",
   "engines": {
@@ -29,7 +29,8 @@
     "check:source": "python3 scripts/validate_structure.py --profile annotated",
     "check:annotated": "python3 scripts/build_profile.py annotated check",
     "check:core": "python3 scripts/build_profile.py core check",
-    "check": "npm run check:source && npm run test:profiles && npm run test:pdf-links && npm run test:contracts && npm run check:annotated && npm run check:core",
+    "check:version": "python3 scripts/release.py check",
+    "check": "npm run check:version && npm run check:source && npm run test:profiles && npm run test:pdf-links && npm run test:contracts && npm run check:annotated && npm run check:core",
     "check:links": "myst build --html --check-links --strict"
   },
   "devDependencies": {

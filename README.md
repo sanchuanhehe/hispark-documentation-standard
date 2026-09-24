@@ -37,6 +37,12 @@ cp -R .agents/skills/hispark-doc-author "${CODEX_HOME:-$HOME/.codex}/skills/"
 
 ## 构建版本
 
+发布版本以 [VERSION](VERSION) 为准，变更记录见 [Changelog](CHANGELOG.md)，发布操作见[发布手册](.github/RELEASING.md)。构建 Profile 与发布版本是两个维度。
+
+- [最新稳定版](https://github.sanchuanhehe.com/hispark-documentation-standard/)：最近正式发布的规范。
+- [固定版本 v0.1.4](https://github.sanchuanhehe.com/hispark-documentation-standard/v0.1.4/)：可用于固定版本引用。
+- [开发版](https://github.sanchuanhehe.com/hispark-documentation-standard/dev/)：main 快照，不作为正式发布。
+
 - **Annotated（默认完整版本）**：保留第 2.2 节及全部非规范性解释块。
 - **Core（可选核心版本）**：排除第 2.2 节、解释块及仅服务于解释层的检查项和参考资料，具体范围由 [profiles/core.json](profiles/core.json) 定义。
 - **基础阅读摘编**：提取第 4 章十项共同要求，省略解释块，并附第 2.1 节关键词定义。它是阅读入口，不是新的符合性等级，也不替代完整规范或 Core。

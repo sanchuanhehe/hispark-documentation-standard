@@ -10,9 +10,11 @@ from urllib.parse import urlsplit
 
 from build_profile import ROOT, publish_file, resolve_myst, run
 from profile_transform import apply_manifest, load_manifest, read_documents
+from release import release_metadata
 
 
 def reading_extract() -> str:
+    version, date, _ = release_metadata(ROOT)
     documents = read_documents(ROOT)
     core, _ = apply_manifest(documents, load_manifest(ROOT, "core"))
     basics = core["docs/part-1-foundations/04-core-principles.md"]
@@ -28,7 +30,7 @@ def reading_extract() -> str:
     bcp = language.split("## 2.1 BCP 14 关键词\n", 1)[1].split("## 2.2 ", 1)[0].strip()
     return (
         "---\ntitle: '基础规范：十项共同要求'\n---\n\n"
-        "V1.2 结构整改试行稿 · 2026-09-10\n\n"
+        f"v{version} · {date}\n\n"
         "这是完整规范第 4 章的阅读摘编，省略解释块，并附上第 2.1 节的关键词定义。"
         "正文中的章号指向完整规范；专项条款仍按场景适用。"
         "本摘编不构成独立符合性等级，也不替代完整规范或既有 Core 版本。\n\n"

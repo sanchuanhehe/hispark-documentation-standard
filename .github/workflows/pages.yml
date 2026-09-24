@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages-${{ github.ref }}
+  group: pages
   cancel-in-progress: false
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      BASE_URL: /${{ github.event.repository.name }}
+      BASE_URL: /${{ github.event.repository.name }}/dev
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -48,6 +48,17 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/build_pages.py 2>&1 | tee _build/pages-evidence/build.log
+      - name: Assemble immutable releases and dev
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mv _build/pages _build/pages-dev
+          python scripts/assemble_pages.py --repo "$REPOSITORY" --base-url "/$REPOSITORY_NAME" 2>&1 | tee _build/pages-evidence/assemble.log
       - name: Archive validation evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -56,6 +67,8 @@ jobs:
           path: |
             _build/pages-evidence/
             _build/pages/build-manifest.json
+            _build/pages/deployment-manifest.json
+            _build/pages/versions.json
           if-no-files-found: error
       - name: Upload verified site
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
