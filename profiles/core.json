@@ -71,7 +71,7 @@
     {
       "kind": "line",
       "path": "docs/part-3-quality/10-review-and-merge.md",
-      "text": "解释性内容如存在，Reviewer MUST 按第 2.2 节执行删除测试，并核对背景、成因、作用机制和预期效果。"
+      "text": "解释性内容如存在，Reviewer 必须（MUST）按第 2.2 节执行删除测试，并核对背景、成因、作用机制和预期效果。"
     },
     {
       "kind": "line",
