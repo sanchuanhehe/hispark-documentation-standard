@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_pages import audit_site, publish_markdown, publish_retired_handbook, validate_base_url
+from build_pages import add_changelog, audit_site, publish_markdown, publish_retired_handbook, validate_base_url
 from build_profile import remove_exports_and_downloads, ROOT
 
 
@@ -147,6 +147,28 @@ class MarkdownPublicationTests(unittest.TestCase):
         for path in records[0]["paths"]:
             self.assertEqual((self.site / path).read_bytes(), self.original)
         self.assertEqual(records[0]["sha256"], hashlib.sha256(self.original).hexdigest())
+
+    def test_changelog_is_rendered_and_published_from_one_source(self):
+        original = b"# Changelog\n\n## [Unreleased]\n"
+        (self.source / "CHANGELOG.md").write_bytes(original)
+        shadow = self.root / "shadow"
+        shadow.mkdir()
+        (shadow / "myst.yml").write_text("project:\n  toc:\n    - file: docs/index.md\nsite:\n  template: book-theme\n")
+        add_changelog(shadow, self.source)
+        self.assertEqual((shadow / "CHANGELOG.md").read_bytes(), original)
+        self.assertIn("\n    - file: CHANGELOG.md\n", (shadow / "myst.yml").read_text())
+        with self.assertRaises(ValueError):
+            publish_markdown(self.source, self.site)
+        (self.site / "changelog").mkdir()
+        (self.site / "changelog/index.html").write_text("HiSpark Changelog")
+        (self.site / "changelog.json").write_text(json.dumps(
+            {"kind": "Article", "slug": "changelog", "location": "/CHANGELOG.md"}))
+        records = publish_markdown(self.source, self.site)
+        self.assertEqual(len(records), 2)
+        for name in ("changelog.md", "CHANGELOG.md"):
+            self.assertEqual((self.site / name).read_bytes(), original)
+        with self.assertRaises(ValueError):
+            add_changelog(shadow, self.source)
 
     def test_index_and_nested_source_mapping(self):
         self.article.update(slug="index")

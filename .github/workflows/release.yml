@@ -21,10 +21,11 @@ jobs:
   build:
     name: Validate and package release
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
       BASE_URL: /${{ github.event.repository.name }}
+      PDF_FONT_PROFILE: open
     outputs:
       tag: ${{ steps.identity.outputs.tag }}
       commit: ${{ steps.identity.outputs.commit }}
@@ -64,13 +65,20 @@ jobs:
           mkdir -p _build/release-evidence
           npm run check 2>&1 | tee _build/release-evidence/check.log
           python -m unittest discover -s scripts -p 'test_*.py' 2>&1 | tee _build/release-evidence/tests.log
+      - name: Install explicit PDF toolchain and open fonts
+        run: bash scripts/install_pdf_dependencies.sh
+      - name: Build and verify all PDF editions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/build_pdfs.py --channel release 2>&1 | tee _build/release-evidence/pdf.log
       - name: Build both URL layouts and package verified artifacts
         shell: bash
         run: |
           set -euo pipefail
           python scripts/build_pages.py --channel release --output _build/release-root 2>&1 | tee _build/release-evidence/root.log
           python scripts/build_pages.py --channel release --base-url "$BASE_URL/$RELEASE_TAG" --output _build/release-version 2>&1 | tee _build/release-evidence/version.log
-          python scripts/release.py bundle --tag "$RELEASE_TAG" --root _build/release-root --versioned _build/release-version --base-url "$BASE_URL" --output _build/release-assets
+          python scripts/release.py bundle --tag "$RELEASE_TAG" --root _build/release-root --versioned _build/release-version --base-url "$BASE_URL" --pdfs _build/pdf-release --output _build/release-assets
           python scripts/release.py notes --tag "$RELEASE_TAG" --output _build/release-assets/RELEASE_NOTES.md
       - name: Archive release evidence
         if: always()
@@ -81,6 +89,7 @@ jobs:
             _build/release-evidence/
             _build/release-root/build-manifest.json
             _build/release-version/build-manifest.json
+            _build/pdf-evidence/
           if-no-files-found: error
       - name: Upload release assets
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -114,7 +123,13 @@ jobs:
           sha256sum --check SHA256SUMS
           test -s RELEASE_NOTES.md
           gh release create "$RELEASE_TAG" --verify-tag --draft --title "$RELEASE_TAG" --notes-file RELEASE_NOTES.md
-          gh release upload "$RELEASE_TAG" "site-$RELEASE_TAG.tar.gz" "skills-$RELEASE_TAG.zip" SHA256SUMS
+          gh release upload "$RELEASE_TAG" "site-$RELEASE_TAG.tar.gz" "skills-$RELEASE_TAG.zip" \
+            "hispark-documentation-standard-$RELEASE_TAG.pdf" \
+            "hispark-documentation-standard-core-$RELEASE_TAG.pdf" \
+            "hispark-documentation-basics-$RELEASE_TAG.pdf" \
+            "hispark-documentation-standard-$RELEASE_TAG.links.json" \
+            "hispark-documentation-standard-core-$RELEASE_TAG.links.json" \
+            "hispark-documentation-basics-$RELEASE_TAG.links.json" pdf-manifest.json SHA256SUMS
           gh release edit "$RELEASE_TAG" --draft=false --latest
       - name: Request versioned Pages deployment
         run: gh workflow run pages.yml --ref main

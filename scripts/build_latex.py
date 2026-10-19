@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from pathlib import Path
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -16,8 +17,41 @@ BUILD = ROOT / "_build" / "latex"
 PDF = ROOT / "exports" / "hispark-documentation-standard.pdf"
 PREFIX = "hispark-documentation-standard-tex"
 EDITION = "full"
-REQUIRED_FONTS = ("Arial", "Microsoft YaHei")
+FONT_PROFILES = {
+    "licensed": ("Arial", "Microsoft YaHei"),
+    "open": ("Liberation Sans", "Noto Sans CJK SC"),
+}
 LINKS = []
+
+
+def font_families() -> tuple[str, str]:
+    profile = os.environ.get("PDF_FONT_PROFILE", "licensed")
+    if profile not in FONT_PROFILES:
+        raise ValueError(f"unknown PDF_FONT_PROFILE: {profile}")
+    return FONT_PROFILES[profile]
+
+
+def stamp_identity(main: Path) -> None:
+    """Version identity is supplied by the verified PDF orchestration entry point."""
+    raw = os.environ.get("HISPARK_PDF_IDENTITY")
+    if not raw:
+        return
+    identity = json.loads(raw)
+    version, date, commit = (identity[k] for k in ("version", "release_date", "commit"))
+    if (not re.fullmatch(r"\d+\.\d+\.\d+", version)
+            or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date)
+            or not re.fullmatch(r"[0-9a-f]{40}|local-uncommitted", commit)
+            or identity["channel"] not in {"release", "dev"}):
+        raise ValueError("invalid PDF identity")
+    label = "正式发布" if identity["channel"] == "release" else "开发快照（非正式发布）"
+    latin, cjk = font_families()
+    text = main.read_text()
+    text, count = re.subn(r"\\date\{[^}]*\}", lambda _: (
+        f"\\date{{v{version} · {date}\\\\[0.4em]\\small {label} · {commit[:8]}"
+        f"\\\\[0.4em]\\small {cjk} / {latin}}}"), text)
+    if count != 1:
+        raise ValueError("PDF title-page identity anchor missing or duplicated")
+    main.write_text(text)
 
 
 def safe_extract(archive: zipfile.ZipFile, destination: Path) -> None:
@@ -154,34 +188,47 @@ def resolve_font(family: str, style: str) -> Path:
 
 def prepare_compile_fonts(main: Path) -> tuple[str, list[Path]]:
     """Link resolved faces into the temporary build without persisting host paths."""
-    faces = {
-        "hispark-arial-regular.ttf": resolve_font("Arial", "Regular"),
-        "hispark-arial-bold.ttf": resolve_font("Arial", "Bold"),
-        "hispark-arial-italic.ttf": resolve_font("Arial", "Italic"),
-        "hispark-arial-bold-italic.ttf": resolve_font("Arial", "Bold Italic"),
-        "hispark-yahei-regular.ttc": resolve_font("Microsoft YaHei", "Regular"),
-        "hispark-yahei-bold.ttc": resolve_font("Microsoft YaHei", "Bold"),
-    }
+    latin_family, cjk_family = font_families()
+    faces = {}
+    for group, family, styles in (
+        ("latin", latin_family, ("Regular", "Bold", "Italic", "Bold Italic")),
+        ("cjk", cjk_family, ("Regular", "Bold")),
+    ):
+        for style in styles:
+            source = resolve_font(family, style)
+            name = f"hispark-{group}-{style.lower().replace(' ', '-')}{source.suffix}"
+            index = subprocess.check_output(
+                ["fc-match", "--format=%{index}", f"{family}:style={style}"], text=True).strip()
+            if not index.isdigit():
+                raise ValueError(f"missing font collection index: {family}/{style}")
+            faces[group, style] = (name, source, int(index))
     links: list[Path] = []
-    for name, source in faces.items():
+    for name, source, _ in faces.values():
         link = BUILD / name
         link.symlink_to(source)
         links.append(link)
 
     portable = main.read_text(encoding="utf-8")
-    latin = """[
-  UprightFont=hispark-arial-regular.ttf,
-  BoldFont=hispark-arial-bold.ttf,
-  ItalicFont=hispark-arial-italic.ttf,
-  BoldItalicFont=hispark-arial-bold-italic.ttf
-]{hispark-arial-regular.ttf}"""
-    cjk = """[
-  UprightFont=hispark-yahei-regular.ttc,
-  BoldFont=hispark-yahei-bold.ttc,
-  ItalicFont=hispark-yahei-regular.ttc,
-  BoldItalicFont=hispark-yahei-bold.ttc,
-  FontIndex=0
-]{hispark-yahei-regular.ttc}"""
+    def options(group):
+        styles = ("Regular", "Bold", "Italic", "Bold Italic") if group == "latin" else ("Regular", "Bold", "Regular", "Bold")
+        # Fontspec in TeX Live 2023 can append the inferred extension again
+        # to explicit *Font filenames. Declare it once; use stems for faces.
+        extension = faces[group, "Regular"][1].suffix
+        if any(faces[group, style][1].suffix != extension for style in styles):
+            raise ValueError("font faces require different file extensions")
+        fields = ["Path=./", f"Extension={extension}"]
+        indices = set()
+        for key, style in zip(("Upright", "Bold", "Italic", "BoldItalic"), styles):
+            name, _, index = faces[group, style]
+            fields.append(f"{key}Font={Path(name).stem}")
+            indices.add(index)
+        if len(indices) != 1:
+            raise ValueError("font faces require different collection indices")
+        index = indices.pop()
+        if faces[group, "Regular"][1].suffix.lower() == ".ttc":
+            fields.append(f"FontIndex={index}")
+        return "[\n  " + ",\n  ".join(fields) + "\n]{" + Path(faces[group, "Regular"][0]).stem + "}"
+    latin, cjk = options("latin"), options("cjk")
     compiled = portable
     for command in ("setmainfont", "setsansfont", "setmonofont"):
         compiled = compiled.replace(f"\\{command}{{Arial}}", f"\\{command}{latin}", 1)
@@ -194,7 +241,7 @@ def prepare_compile_fonts(main: Path) -> tuple[str, list[Path]]:
 
 
 def validate_required_font_families() -> None:
-    for family in REQUIRED_FONTS:
+    for family in font_families():
         result = subprocess.run(
             ["fc-match", "--format=%{file}\n%{family}\n", family],
             check=True,
@@ -269,6 +316,7 @@ def main() -> None:
 
     patch_generated_structure()
     patch_internal_links()
+    stamp_identity(BUILD / f"{PREFIX}.tex")
 
     if not args.tex_only:
         compile_pdf()

@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import tempfile
 from urllib.parse import urlsplit
@@ -52,6 +53,14 @@ def add_version_config(config: Path, info: dict) -> None:
     # They are validated against the composed artifact by assemble_pages/tests.
     links = " · ".join(f'<a href="{prefix}{route}">{title}</a>' for route, title in (
         ("/", "最新稳定版"), ("/dev/", "开发版"), ("/versions/", "历史版本")))
+    edition = prefix + (f"/v{info['version']}" if info["channel"] == "release" else "/dev")
+    links += f' · <a href="{edition}/changelog/">更新记录</a>'
+    if info["channel"] == "release":
+        release = f"https://github.com/sanchuanhehe/hispark-documentation-standard/releases/download/v{info['version']}"
+        for stem, title in (("hispark-documentation-standard", "完整版 PDF"),
+                            ("hispark-documentation-standard-core", "Core PDF"),
+                            ("hispark-documentation-basics", "阅读摘编 PDF")):
+            links += f' · <a href="{release}/{stem}-v{info["version"]}.pdf">{title}</a>'
     text = config.read_text(encoding="utf-8")
     if "  parts:" in text.split("site:\n", 1)[1]:
         raise ValueError("site parts already configured; do not overwrite")
@@ -94,6 +103,8 @@ def publish_markdown(source_root: Path, directory: Path) -> list[dict]:
     """Expose only rendered docs, byte-for-byte, with route and source-path URLs."""
     expected = {p.relative_to(source_root).as_posix()
                 for p in (source_root / "docs").rglob("*.md")}
+    if (source_root / "CHANGELOG.md").is_file():
+        expected.add("CHANGELOG.md")
     records, sources, destinations = [], set(), set()
     copies = []
     for metadata in sorted(directory.glob("*.json")):
@@ -103,14 +114,15 @@ def publish_markdown(source_root: Path, directory: Path) -> list[dict]:
         slug, location = article.get("slug"), article.get("location")
         if not isinstance(slug, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
             raise ValueError("invalid Markdown route slug")
-        if (not isinstance(location, str) or not location.startswith("/docs/")
+        is_changelog = location == "/CHANGELOG.md" and slug == "changelog"
+        if (not isinstance(location, str) or (not location.startswith("/docs/") and not is_changelog)
                 or not location.endswith(".md") or "\\" in location
                 or any(part in {"", ".", ".."} for part in location[1:].split("/"))):
             raise ValueError("Markdown source must be a canonical docs path")
         relative = location[1:]
         source = source_root / relative
         if (not source.is_file() or source.is_symlink()
-                or not source.resolve().is_relative_to((source_root / "docs").resolve())):
+                or not source.resolve().is_relative_to((source_root if is_changelog else source_root / "docs").resolve())):
             raise ValueError(f"missing or unsafe Markdown source: {relative}")
         html_path = directory / ("index.html" if slug == "index" else f"{slug}/index.html")
         if not html_path.is_file():
@@ -136,6 +148,25 @@ def publish_markdown(source_root: Path, directory: Path) -> list[dict]:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
     return records
+
+
+def add_changelog(shadow: Path, source_root: Path = ROOT) -> None:
+    """Render the exact release-history source, outside the normative chapters."""
+    source = source_root / "CHANGELOG.md"
+    if source.is_symlink() or not source.is_file() or not source.read_text().startswith("# Changelog\n"):
+        raise ValueError("missing or unsafe Changelog source")
+    destination = shadow / "CHANGELOG.md"
+    if destination.exists():
+        raise ValueError("Changelog destination already exists")
+    config = shadow / "myst.yml"
+    text = config.read_text()
+    if text.count("\nsite:\n") != 1 or "file: CHANGELOG.md" in text:
+        raise ValueError("ambiguous Changelog navigation insertion")
+    # prepare_shadow has already validated all canonical chapters and removed
+    # export controls. Append an auxiliary page, never a PDF book chapter.
+    text = text.replace("\nsite:\n", "\n    - file: CHANGELOG.md\n      title: 更新记录（Changelog）\n\nsite:\n")
+    shutil.copyfile(source, destination)
+    config.write_text(text)
 
 
 def publish_retired_handbook(directory: Path, base_url: str) -> None:
@@ -193,6 +224,9 @@ def main() -> None:
         # Canonical content links are checked before adding cross-version UI.
         # UI routes are validated against the final composite site, not docs/.
         checked_build([resolve_myst(), "build", "--site", "--strict", "--check-links"], shadow)
+        # Release-history comparison links may name a tag not yet published on
+        # a PR. They are publication metadata, not normative external sources.
+        add_changelog(shadow)
         info = version_identity(base_url, version, args.channel, commit)
         add_version_config(shadow / "myst.yml", info)
         checked_build([resolve_myst(), "build", "--html", "--strict"], shadow)

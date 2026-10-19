@@ -115,6 +115,14 @@ npm run build:all:profiles
 
 PDF 构建会审计实际跳转目标和正文点击区域，映射保存于 `exports/*.links.json`。已有完整版 PDF 可用 `npm run check:pdf-links` 复查；基础摘编未收录的章节仅保留为文字引用。
 
+CI 的三套 PDF 使用显式开源字体方案（Noto Sans CJK SC＋Liberation Sans），本地默认微软雅黑＋Arial 不变。在具备对应字体与 TeX 工具链的环境中运行：
+
+```bash
+PDF_FONT_PROFILE=open python3 scripts/build_pdfs.py
+```
+
+输出在 `_build/pdf-release/`；封面及清单标注版本、提交、开发/正式状态和字体方案。安装方法与验证边界见 [LaTeX 输出说明](latex/README.md)。
+
 ## 检查与参考实现
 
 [examples/contracts/](examples/contracts/) 提供非规范性模板和参考数据，不要求采用项目使用同一工具。真实产品参数与证据留在采用项目。
@@ -130,7 +138,7 @@ python3 scripts/validate_contracts.py tutorial examples/contracts/tutorial.examp
 
 ## 网站发布
 
-GitHub Pages 在 `main` 推送或手动触发时检查并发布，PR 只验证。发布 HTML 与 Markdown 原文，不上传本地 PDF/TeX 或商业字体。流程与验证边界见 [Pages 发布说明](.github/PAGES.md)。
+GitHub Pages 在 `main` 推送或手动触发时检查并发布，PR 只验证。新快照包含 HTML、Markdown 原文及 `changelog/` 更新记录页面；部署依赖 HTML 与三套 PDF 检查全部通过。后续正式 Release 将发布同版本 PDF 附件并在站点页脚提供下载入口，不上传本地旧 PDF/TeX 或商业字体。已发布旧版本保持不变。流程与验证边界见 [Pages 发布说明](.github/PAGES.md)。
 
 在仓库根目录、已激活的虚拟环境中生成同等布局的部署产物：
 

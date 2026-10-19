@@ -9,7 +9,9 @@
 - 每个已渲染页面同时发布原始 Markdown，例如 `preface.md`、`authoring.md`；另保留 `docs/preface.md`、`docs/part-2-authoring/06-authoring.md` 等源目录地址，以保留原文相对文件链接的路径上下文。短地址不改写原文中的相对链接；需要沿原文链接阅读时使用源目录地址。源格式的跨页锚点由文档生成器解析，纯文本端点不提供 HTML 的锚点跳转行为。
 - 原文逐字节复制自同次构建的源快照，含 Front Matter 与指令，不是从 HTML 反向转换。`build-manifest.json` 的 `markdown_sources` 给出源路径、页面标识、两个发布地址及 SHA-256，文件摘要涵盖所有原文；缺页、重复映射、路径越界或目的文件冲突时构建失败。不发布未渲染页面或整个仓库。
 - 构建/检查/证据归档失败则不部署。日志与清单归档为 Actions artifact。
-- 此发布范围为 HTML 和 Markdown 原文；不在公开 Runner 中复制商业字体，也不发布旧 PDF。PDF/TeX 下载按钮仅在临时站点配置中移除，不修改规范正文、Core 范围或本地导出配置。
+- 网站包含 HTML、Markdown 原文及由同提交 `CHANGELOG.md` 生成的更新记录。源记录逐字节发布为 `changelog.md` 和 `CHANGELOG.md`，页面入口为 `changelog/`。
+- PR/main/手动运行增加独立 PDF 检查 job，使用显式开源字体方案构建三套开发快照，归档 PDF、内链清单、字体及环境证据。部署依赖 HTML 与 PDF 两个 job 全部通过，不在公开 Runner 中复制商业字体或使用本地旧 PDF。
+- 正式 PDF 由 Release 工作流重新构建、审计并发布为版本化附件；新正式站点页脚链接该版本的三套 PDF。开发版不展示正式 PDF 下载链接。原有 PDF/TeX 自动导出按钮仍仅在临时配置中移除，不修改规范正文、Core 范围或本地导出配置。
 
 本地复现（先按仓库 README 安装依赖）：
 

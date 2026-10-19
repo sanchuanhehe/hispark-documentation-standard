@@ -83,12 +83,20 @@ def verify_site(directory: Path, tag: str, base_url: str, commit: str | None = N
     return manifest
 
 
-def bundle(root: Path, versioned: Path, output: Path, tag: str, base_url: str) -> None:
+def bundle(root: Path, versioned: Path, output: Path, tag: str, base_url: str,
+           pdfs: Path) -> None:
+    import shutil
+    from build_pdfs import verify_pdfs
     version_key(tag)
     current = verify_site(root, tag, base_url)
     fixed = verify_site(versioned, tag, f"{base_url}/{tag}", current["commit"])
     if current["markdown_sources"] != fixed["markdown_sources"]:
         raise ValueError("stable and fixed-version content differs")
+    pdf_manifest = verify_pdfs(pdfs, tag[1:], current["commit"], "release")
+    for record in current["markdown_sources"]:
+        source = pdf_manifest["inputs"].get(record["source"], {})
+        if source.get("sha256") != record["sha256"]:
+            raise ValueError("site and PDF source identity mismatch")
     output.mkdir(parents=True, exist_ok=True)
     archive = output / f"site-{tag}.tar.gz"
     if archive.exists():
@@ -103,7 +111,17 @@ def bundle(root: Path, versioned: Path, output: Path, tag: str, base_url: str) -
                 raise ValueError("skill symlink is not publishable")
             if path.is_file():
                 zipped.write(path, path.relative_to(ROOT / ".agents/skills"))
-    sums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in (archive, skills))
+    files = [archive, skills]
+    pdf_names = ["pdf-manifest.json"]
+    for record in pdf_manifest["editions"].values():
+        pdf_names.extend((record["pdf"], record["links"]))
+    for name in pdf_names:
+        target = output / name
+        if target.exists():
+            raise ValueError(f"refusing to overwrite PDF asset: {name}")
+        shutil.copyfile(pdfs / name, target)
+        files.append(target)
+    sums = "".join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in files)
     (output / "SHA256SUMS").write_text(sums)
 
 
@@ -115,6 +133,7 @@ def main() -> None:
     parser.add_argument("--versioned", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--base-url")
+    parser.add_argument("--pdfs", type=Path)
     args = parser.parse_args()
     version, released, notes = check(tag=args.tag)
     if args.action == "notes":
@@ -122,9 +141,9 @@ def main() -> None:
             parser.error("notes requires --output")
         args.output.write_text(f"## {version} - {released}\n\n{notes}", encoding="utf-8")
     elif args.action == "bundle":
-        if not all((args.tag, args.root, args.versioned, args.output, args.base_url)):
-            parser.error("bundle requires tag, root, versioned, output and base-url")
-        bundle(args.root, args.versioned, args.output, args.tag, args.base_url)
+        if not all((args.tag, args.root, args.versioned, args.output, args.base_url, args.pdfs)):
+            parser.error("bundle requires tag, root, versioned, output, base-url and pdfs")
+        bundle(args.root, args.versioned, args.output, args.tag, args.base_url, args.pdfs)
     else:
         print(f"Version, changelog, package metadata and document identity agree: v{version}")
 

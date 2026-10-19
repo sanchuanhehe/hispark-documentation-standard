@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- Publish the same Changelog source as a navigable web page and downloadable Markdown for each new site snapshot.
+- Automatically build and verify Annotated, Core and basic-reading PDFs using an explicit open-font profile, with version identity, link audits and build provenance.
+- Include all three PDFs and their validation manifests in future Release assets and SHA-256 checksums; block release or deployment when required PDF checks fail.
+
 ## [0.1.5] - 2026-09-24
 
 ### Changed
