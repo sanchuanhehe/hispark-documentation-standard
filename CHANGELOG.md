@@ -4,15 +4,25 @@
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-10-22
+
 ### Added
 
 - Publish the same Changelog source as a navigable web page and downloadable Markdown for each new site snapshot.
 - Automatically build and verify Annotated, Core and basic-reading PDFs using an explicit open-font profile, with version identity, link audits and build provenance.
-- Include all three PDFs and their validation manifests in future Release assets and SHA-256 checksums; block release or deployment when required PDF checks fail.
+- Include all three PDFs and their validation manifests in Release assets and SHA-256 checksums; block release or deployment when required PDF checks fail.
+
+### Changed
+
+- Improve wording throughout the standard to make requirements easier to understand while preserving normative keyword strength and technical requirements.
+
+### Fixed
+
+- Clarify that unverified scenarios are not automatically inapplicable, and distinguish supporting explanations from content that serves a separate page purpose.
 
 ### Removed
 
-- 删除《写作入口：选模板，补事实，交评审》页面及 PDF 附录 B，相关入口改指第 6 章；旧 HTML 和 Markdown 地址仅保留删除提示。
+- Remove the writing-entry handbook and PDF Appendix B; direct readers to Chapter 6 and retain deletion notices at the old HTML and Markdown URLs.
 
 ## [0.1.5] - 2026-09-24
 
@@ -53,6 +63,7 @@
 - 修复 PDF 正文内链目标，并通过自动检查验证实际跳转。
 - 补齐文档导航、原文发布覆盖和页面删除兼容入口的回归测试。
 
-[Unreleased]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/sanchuanhehe/hispark-documentation-standard/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/sanchuanhehe/hispark-documentation-standard/releases/tag/v0.1.4
