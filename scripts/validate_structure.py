@@ -78,7 +78,6 @@ def keyword_style_errors(text: str, source: str) -> list[str]:
 EXPECTED = [
     "docs/index.md",
     "docs/preface.md",
-    "docs/handbook/write-a-page.md",
     "docs/part-1-foundations/01-scope-and-purpose.md",
     "docs/part-1-foundations/02-normative-language.md",
     "docs/part-1-foundations/03-terminology.md",

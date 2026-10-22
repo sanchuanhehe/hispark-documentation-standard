@@ -44,7 +44,7 @@
 | [第 13 章：迁移](../docs/part-4-governance/13-migration.md) | 改成可执行的迁移动作，区分分阶段实施和降低要求；强调记录实际使用反馈，不预填改善结论 |
 | [第 14 章：检查表](../docs/part-4-governance/14-conformance-checklist.md) | 把压缩短语改成可以回答的检查问题；区分单页结论与项目结论；继续链接正文而不另设规则 |
 | [第 15 章：参考资料](../docs/backmatter/15-references.md) | 补一句资料用途说明；来源及链接不变 |
-| [写作入口](../docs/handbook/write-a-page.md) | 用作者实际要做的动作说明选类型、填事实、写步骤和交评审；保留未知、待验证及模板不等于批准的限制 |
+| [写作入口（修订时快照，后已删除）](https://github.com/sanchuanhehe/hispark-documentation-standard/blob/0fa98251b7e9606ada6bd51d6c93a1a0d0b5310e/docs/handbook/write-a-page.md) | 用作者实际要做的动作说明选类型、填事实、写步骤和交评审；保留未知、待验证及模板不等于批准的限制 |
 | [附录 A](../docs/backmatter/appendix-a-directory-mapping.md) | 明确目录映射只是归类参考，不能只凭目录名决定类型；映射数据不变 |
 
 11 个非规范性解释块均已对照相邻条款复查。解释用于说明问题和做法，没有把新的符合性条件藏在解释块里；Core 构建仍按原有选择器移除这些内容。

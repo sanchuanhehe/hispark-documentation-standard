@@ -10,7 +10,7 @@
 |---|---|
 | 了解背景与适用范围 | [前言](docs/preface.md)、[适用范围与目的](docs/part-1-foundations/01-scope-and-purpose.md) |
 | 掌握共同要求 | [十项基础要求](docs/part-1-foundations/04-core-principles.md) |
-| 编写文档 | [写作入口与模板](docs/handbook/write-a-page.md) |
+| 编写文档 | [页面创作规范](docs/part-2-authoring/06-authoring.md) |
 | 审查变更或准备发布 | [Review 要求](docs/part-3-quality/10-review-and-merge.md)、[变更与项目检查表](docs/part-4-governance/14-conformance-checklist.md) |
 | 接入验证与治理 | [验证与测试](docs/part-3-quality/09-validation-and-testing.md)、[迁移方案](docs/part-4-governance/13-migration.md) |
 

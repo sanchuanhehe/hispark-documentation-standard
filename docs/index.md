@@ -20,7 +20,7 @@ short_title: 从这里开始
 | 当前任务 | 最短阅读路径 |
 |---|---|
 | 第一次采用规范 | [十项基础要求](part-1-foundations/04-core-principles.md) → [试点与迁移](part-4-governance/13-migration.md) |
-| 写一篇文档 | [写作入口与模板](handbook/write-a-page.md) → 对应专项要求 |
+| 写一篇文档 | [页面创作规范](part-2-authoring/06-authoring.md) → 对应专项要求 |
 | 审查一次修改 | [Review 要求](part-3-quality/10-review-and-merge.md) → [文档变更检查](part-4-governance/14-conformance-checklist.md) |
 | 验证文档或 Sample | [验证与测试](part-3-quality/09-validation-and-testing.md) → [分层执行要求](#sample-execution-levels) |
 | 维护项目或准备发布 | [项目与发布检查](part-4-governance/14-conformance-checklist.md) → [Daily CI](part-3-quality/11-daily-ci.md)、[维护契约](part-4-governance/12-governance-and-maintenance.md) |

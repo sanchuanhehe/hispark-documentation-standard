@@ -10,6 +10,10 @@
 - Automatically build and verify Annotated, Core and basic-reading PDFs using an explicit open-font profile, with version identity, link audits and build provenance.
 - Include all three PDFs and their validation manifests in future Release assets and SHA-256 checksums; block release or deployment when required PDF checks fail.
 
+### Removed
+
+- 删除《写作入口：选模板，补事实，交评审》页面及 PDF 附录 B，相关入口改指第 6 章；旧 HTML 和 Markdown 地址仅保留删除提示。
+
 ## [0.1.5] - 2026-09-24
 
 ### Changed
