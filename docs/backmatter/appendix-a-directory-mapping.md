@@ -13,4 +13,4 @@ overall-architecture/    explanation；少量 reference
 FAQ/                     how-to；少量 reference
 ```
 
-此映射是页面治理的默认值，不是机械分类。用户需求和页面主要意图始终具有更高优先级。
+上表是默认的归类参考。不要只看目录名就决定文档类型，先看用户要做什么、页面主要解决什么问题，再对照正文中的目录要求。

@@ -2,6 +2,8 @@
 title: '15. 参考资料'
 ---
 
+以下资料分别介绍文档分类、规范关键词，以及规范性条款和解释性内容的组织方式，供查阅本规范的依据。
+
 - [Diátaxis：系统化技术文档方法](https://diataxis.fr/)
 - [Diátaxis Tutorials](https://diataxis.fr/tutorials/)
 - [Diátaxis How-to guides](https://diataxis.fr/how-to-guides/)
